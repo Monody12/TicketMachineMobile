@@ -55,7 +55,7 @@ fun TicketMobileApp(){
         }) { innerPadding ->
             NavHost(
                 navController = navController,
-                startDestination = Overview.route,
+                startDestination = CheckTicket.route,
                 modifier = Modifier.padding(innerPadding))
             {
                 composable(route = Overview.route){
