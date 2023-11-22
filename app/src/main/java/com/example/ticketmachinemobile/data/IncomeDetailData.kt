@@ -15,7 +15,7 @@ data class IncomeDetailData(
 object IncomeDetailDataRepository {
     var incomeDetailData: IncomeDetailData? = null
 
-    fun getSimpleIncomeDetail(): IncomeDetailData {
+    fun getSimpleData(): IncomeDetailData {
         return IncomeDetailData(
            "3680.10",
            "1234.50",
