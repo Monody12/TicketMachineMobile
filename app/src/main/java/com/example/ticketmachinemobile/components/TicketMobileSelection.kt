@@ -3,6 +3,7 @@ package com.example.ticketmachinemobile.components
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem

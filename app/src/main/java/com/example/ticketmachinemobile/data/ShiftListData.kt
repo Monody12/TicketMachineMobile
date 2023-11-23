@@ -1,0 +1,48 @@
+package com.example.ticketmachinemobile.data
+
+/**
+ * 班次
+ * 线路信息、发车时间、乘客数量、携童数量、已检票数量、班次状态
+ */
+data class ShiftData(
+    var lineData: LineData?,
+    var departureTime: String?,
+    var passengerCount: Int?,
+    var childCount: Int?,
+    var checkedCount: Int?,
+    var shiftStatus: String?
+){
+    constructor() : this(
+        lineData = null,
+        departureTime = null,
+        passengerCount = null,
+        childCount = null,
+        checkedCount = null,
+        shiftStatus = null
+    )
+}
+
+object ShiftRepository {
+    var shiftDataList: List<ShiftData>? = null
+
+    fun getSimpleShiftList(): List<ShiftData> {
+        val shiftDataList = mutableListOf<ShiftData>()
+        for (i in 1..4) {
+            shiftDataList.add(
+                this.getSimpleShift()
+            )
+        }
+        return shiftDataList
+    }
+
+    fun getSimpleShift(): ShiftData {
+        return ShiftData(
+            lineData = LineDataRepository.getSimpleLine(),
+            departureTime = "10:00",
+            passengerCount = 45,
+            childCount = 2,
+            checkedCount = 10,
+            shiftStatus = "未发车"
+        )
+    }
+}

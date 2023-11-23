@@ -15,17 +15,17 @@ data class Station(
  * 线路信息
  * 线路名称、线路站点列表
  */
-data class LineListData (
+data class LineData (
     var lineName: String,
     var stationList: List<Station>
 )
 
-object LineListDataRepository {
-    var lineListData: LineListData? = null
+object LineDataRepository {
+    var lineData: LineData? = null
 
-    fun getSimpleLineList(): LineListData {
-        return LineListData(
-            lineName = "1路",
+    fun getSimpleLine(): LineData {
+        return LineData(
+            lineName = "测试用线路名称",
             stationList = listOf(
                 Station("站点1", 45, 0, "10:00"),
                 Station("站点2", 0, 10, "10:10"),
@@ -34,4 +34,12 @@ object LineListDataRepository {
             )
         )
     }
+
+//    fun getSimpleLineList() :List<LineData>{
+//        val lineList = mutableListOf<LineData>()
+//        for (i in 1..4){
+//            lineList.add(getSimpleLine())
+//        }
+//        return lineList
+//    }
 }
