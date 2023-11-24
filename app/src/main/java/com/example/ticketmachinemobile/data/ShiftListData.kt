@@ -27,7 +27,7 @@ object ShiftRepository {
 
     fun getSimpleShiftList(): List<ShiftData> {
         val shiftDataList = mutableListOf<ShiftData>()
-        for (i in 1..4) {
+        for (i in 1..10) {
             shiftDataList.add(
                 this.getSimpleShift()
             )

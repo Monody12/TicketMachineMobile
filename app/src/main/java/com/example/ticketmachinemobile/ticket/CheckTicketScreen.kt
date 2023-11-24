@@ -54,7 +54,7 @@ fun FilterBox() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "筛选条件",
+                text = "检票",
                 style = MaterialTheme.typography.h6,
             )
             IconButton(onClick = { }) {
