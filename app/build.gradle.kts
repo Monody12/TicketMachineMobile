@@ -66,6 +66,22 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     // huawei Scan Kit
     implementation("com.huawei.hms:scanplus:1.1.3.301")
+    // 扫码
+    // 相机
+    val cameraxVersion = "1.2.0-alpha04"
+    implementation("androidx.camera:camera-camera2:$cameraxVersion")
+    implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
+    implementation("androidx.camera:camera-view:$cameraxVersion")
+
+    // mlkit
+    implementation("com.google.mlkit:barcode-scanning:17.0.2")
+    implementation("com.google.mlkit:text-recognition:16.0.0-beta4")
+    implementation("com.google.mlkit:text-recognition-chinese:16.0.0-beta4")
+
+    // 申请权限
+    val accompanistVersion = "0.23.1"
+    implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
+
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

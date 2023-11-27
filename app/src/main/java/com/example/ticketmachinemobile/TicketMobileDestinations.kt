@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.ConfirmationNumber
 import androidx.compose.material.icons.filled.Money
 import androidx.compose.material.icons.filled.MoneyOff
 import androidx.compose.material.icons.filled.PieChart
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
@@ -53,6 +54,11 @@ object SellTicket : TicketMobileDestination {
     override val route = "sell-ticket"
 }
 
+object ScanQrCode : TicketMobileDestination {
+    override val icon = Icons.Filled.QrCodeScanner
+    override val route = "scan-qr-code"
+}
+
 object SingleAccount : TicketMobileDestination {
     // Added for simplicity, this icon will not in fact be used, as SingleAccount isn't
     // part of the TicketMobileTabRow selection
@@ -66,4 +72,4 @@ object SingleAccount : TicketMobileDestination {
 }
 
 // Screens to be displayed in the top TicketMobileTabRow
-val ticketMobileTabRowScreens = listOf(Overview, CheckTicket, SellTicket)
+val ticketMobileTabRowScreens = listOf(Overview, CheckTicket, SellTicket, ScanQrCode)

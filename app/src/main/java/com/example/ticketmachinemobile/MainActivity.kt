@@ -2,6 +2,7 @@ package com.example.ticketmachinemobile
 
 import android.os.Bundle
 import android.text.format.DateFormat
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
@@ -18,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.ticketmachinemobile.components.TicketMobileTabRow
 import com.example.ticketmachinemobile.overview.OverviewScreen
 import com.example.ticketmachinemobile.overview.navigateSingleTopTo
+import com.example.ticketmachinemobile.scan.ScanQrCodeScreen
 import com.example.ticketmachinemobile.ticket.CheckTicketScreen
 import com.example.ticketmachinemobile.ticket.SellTicketScreen
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
@@ -64,9 +66,17 @@ fun TicketMobileApp(){
                 composable(route = CheckTicket.route){
                     CheckTicketScreen()
                 }
+                composable(route = ScanQrCode.route){
+                    ScanQrCodeScreen(
+                        onScanResult = { scannedCode ->
+                            Log.d("MainActivity", "Scanned code: $scannedCode")
+                        }
+                    )
+                }
                 composable(route = SellTicket.route){
                     SellTicketScreen()
                 }
+
             }
         }
     }
