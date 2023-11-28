@@ -77,6 +77,14 @@ dependencies {
     implementation("com.google.mlkit:barcode-scanning:17.0.2")
     implementation("com.google.mlkit:text-recognition:16.0.0-beta4")
     implementation("com.google.mlkit:text-recognition-chinese:16.0.0-beta4")
+    // zxing
+    implementation("com.google.zxing:core:3.4.1")
+    // 工具栏
+    implementation("androidx.appcompat:appcompat:1.3.1")
+    implementation("com.google.android.material:material:1.4.0")
+    // 权限
+    implementation("pub.devrel:easypermissions:3.0.0")
+
 
     // 申请权限
     val accompanistVersion = "0.23.1"

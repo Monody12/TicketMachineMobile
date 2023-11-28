@@ -32,6 +32,7 @@ class MainActivity : ComponentActivity() {
             TicketMobileApp()
         }
     }
+
 }
 
 @Composable
@@ -57,7 +58,8 @@ fun TicketMobileApp(){
         }) { innerPadding ->
             NavHost(
                 navController = navController,
-                startDestination = CheckTicket.route,
+                // 设置默认启动页面
+                startDestination = ScanQrCode.route,
                 modifier = Modifier.padding(innerPadding))
             {
                 composable(route = Overview.route){
@@ -67,11 +69,7 @@ fun TicketMobileApp(){
                     CheckTicketScreen()
                 }
                 composable(route = ScanQrCode.route){
-                    ScanQrCodeScreen(
-                        onScanResult = { scannedCode ->
-                            Log.d("MainActivity", "Scanned code: $scannedCode")
-                        }
-                    )
+                    ScanQrCodeScreen()
                 }
                 composable(route = SellTicket.route){
                     SellTicketScreen()
