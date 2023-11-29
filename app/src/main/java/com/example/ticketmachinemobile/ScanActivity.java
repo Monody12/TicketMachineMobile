@@ -2,12 +2,17 @@ package com.example.ticketmachinemobile;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.ComponentActivity;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.ticketmachinemobile.scan.zxing.ZXingView;
 import com.example.ticketmachinemobile.scan.zxing.core.BarcodeType;
@@ -20,16 +25,27 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.EasyPermissions;
-
-public class ScanActivity extends ComponentActivity implements QRCodeView.Delegate, EasyPermissions.PermissionCallbacks {
+public class ScanActivity extends ComponentActivity implements QRCodeView.Delegate {
     private static final String TAG = ScanActivity.class.getSimpleName();
     private static final int REQUEST_CODE_CHOOSE_QRCODE_FROM_GALLERY = 666;
 
     private static final int REQUEST_CODE_QRCODE_PERMISSIONS = 1;
 
+    private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
     private ZXingView mZXingView;
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // 用户授予了相机权限，执行打开相机的操作
+                mZXingView.startCamera(); // 打开后置摄像头开始预览，但是并未开始识别
+            } else {
+                // 用户拒绝了相机权限，可以给出提示或采取其他适当的措施
+                Toast.makeText(this, "相机权限被拒绝", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +56,12 @@ public class ScanActivity extends ComponentActivity implements QRCodeView.Delega
 
         mZXingView = findViewById(R.id.zxingview);
         mZXingView.setDelegate(this);
+        // 检查相机权限
+        boolean hasPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        if (!hasPermission) {
+            // 如果没有权限，请求权限
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
+        }
     }
 
     @Override
@@ -73,6 +95,10 @@ public class ScanActivity extends ComponentActivity implements QRCodeView.Delega
     public void onScanQRCodeSuccess(String result) {
         Log.i(TAG, "result:" + result);
         setTitle("扫描结果为：" + result);
+        // 如果当前有正在显示的Toast，先把它取消掉
+
+        // Toast 提示扫码成功和结果
+        Toast.makeText(this, "扫码成功：" + result, Toast.LENGTH_SHORT).show();
         vibrate();
 
         mZXingView.startSpot(); // 开始识别
@@ -181,26 +207,6 @@ public class ScanActivity extends ComponentActivity implements QRCodeView.Delega
 
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
 
-    @Override
-    public void onPermissionsGranted(int requestCode, List<String> perms) {
-    }
-
-    @Override
-    public void onPermissionsDenied(int requestCode, List<String> perms) {
-    }
-
-    @AfterPermissionGranted(REQUEST_CODE_QRCODE_PERMISSIONS)
-    private void requestCodeQRCodePermissions() {
-        String[] perms = {android.Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE};
-        if (!EasyPermissions.hasPermissions(this, perms)) {
-            EasyPermissions.requestPermissions(this, "扫描二维码需要打开相机和散光灯的权限", REQUEST_CODE_QRCODE_PERMISSIONS, perms);
-        }
-    }
 
 }
