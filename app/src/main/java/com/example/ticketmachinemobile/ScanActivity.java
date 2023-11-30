@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.ticketmachinemobile.constant.TicketConstant;
 import com.example.ticketmachinemobile.scan.zxing.ZXingView;
 import com.example.ticketmachinemobile.scan.zxing.core.BarcodeType;
 import com.example.ticketmachinemobile.scan.zxing.core.QRCodeView;
@@ -33,6 +34,8 @@ public class ScanActivity extends ComponentActivity implements QRCodeView.Delega
 
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
     private ZXingView mZXingView;
+
+    private boolean flashlight = false;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -62,6 +65,7 @@ public class ScanActivity extends ComponentActivity implements QRCodeView.Delega
             // 如果没有权限，请求权限
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
         }
+
     }
 
     @Override
@@ -93,15 +97,17 @@ public class ScanActivity extends ComponentActivity implements QRCodeView.Delega
 
     @Override
     public void onScanQRCodeSuccess(String result) {
-        Log.i(TAG, "result:" + result);
-        setTitle("扫描结果为：" + result);
-        // 如果当前有正在显示的Toast，先把它取消掉
-
         // Toast 提示扫码成功和结果
         Toast.makeText(this, "扫码成功：" + result, Toast.LENGTH_SHORT).show();
         vibrate();
+        // 将扫描结果通过 Intent 返回给调用者
+        Intent intent = new Intent();
+        intent.putExtra(TicketConstant.SCAN_RESULT, result);
+        setResult(RESULT_OK, intent);
+        // 关闭当前 Activity
+        finish();
 
-        mZXingView.startSpot(); // 开始识别
+//        mZXingView.startSpot(); // 开始识别
     }
 
     @Override
@@ -128,8 +134,16 @@ public class ScanActivity extends ComponentActivity implements QRCodeView.Delega
 
     public void onClick(View v) {
         int viewId = v.getId();
-
-        if (viewId == R.id.start_preview) {
+        if (viewId == R.id.flashlightButton){
+            if (flashlight){
+                mZXingView.closeFlashlight();
+                flashlight = false;
+            }else{
+                mZXingView.openFlashlight();
+                flashlight = true;
+            }
+        }
+        else if (viewId == R.id.start_preview) {
             mZXingView.startCamera();
         } else if (viewId == R.id.stop_preview) {
             mZXingView.stopCamera();
@@ -198,6 +212,7 @@ public class ScanActivity extends ComponentActivity implements QRCodeView.Delega
     }
 
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -206,7 +221,6 @@ public class ScanActivity extends ComponentActivity implements QRCodeView.Delega
 
 
     }
-
 
 
 }

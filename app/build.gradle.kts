@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.kapt")
 }
 
 android {
@@ -30,14 +31,15 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
+        dataBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
@@ -65,7 +67,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-core")
     implementation("androidx.compose.material:material-icons-extended")
     // huawei Scan Kit
-    implementation("com.huawei.hms:scanplus:1.1.3.301")
+    implementation("com.huawei.hms:scanplus:2.12.0.301")
     // 扫码
     // 相机
     val cameraxVersion = "1.2.0-alpha04"
@@ -74,16 +76,14 @@ dependencies {
     implementation("androidx.camera:camera-view:$cameraxVersion")
 
     // mlkit
-    implementation("com.google.mlkit:barcode-scanning:17.0.2")
-    implementation("com.google.mlkit:text-recognition:16.0.0-beta4")
-    implementation("com.google.mlkit:text-recognition-chinese:16.0.0-beta4")
+//    implementation("com.google.mlkit:barcode-scanning:17.0.2")
+//    implementation("com.google.mlkit:text-recognition:16.0.0-beta4")
+//    implementation("com.google.mlkit:text-recognition-chinese:16.0.0-beta4")
     // zxing
     implementation("com.google.zxing:core:3.4.1")
     // 工具栏
-    implementation("androidx.appcompat:appcompat:1.3.1")
+    implementation("androidx.appcompat:appcompat:1.5.1")
     implementation("com.google.android.material:material:1.4.0")
-    // 权限
-    implementation("pub.devrel:easypermissions:3.0.0")
 
 
     // 申请权限

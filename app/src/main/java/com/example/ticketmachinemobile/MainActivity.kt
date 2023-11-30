@@ -1,17 +1,21 @@
 package com.example.ticketmachinemobile
 
+import android.R
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.text.format.DateFormat
-import android.util.Log
+import android.view.View
+import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.padding
-
 import androidx.compose.material.Scaffold
-
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.core.view.KeyEventDispatcher.Component
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -26,10 +30,22 @@ import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
 
 
 class MainActivity : ComponentActivity() {
+    private val REQUEST_CODE_SCAN = 0x0000
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             TicketMobileApp()
+        }
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_CODE_SCAN && resultCode == Activity.RESULT_OK) {
+            val scanResult = data?.getStringExtra("SCAN_RESULT")
+            // 处理扫码结果
         }
     }
 
@@ -44,6 +60,7 @@ fun TicketMobileApp(){
         val currentDestination = currentBackStack?.destination
         val currentScreen =
             ticketMobileTabRowScreens.find { it.route == currentDestination?.route } ?: Overview
+        var scanResult = ""
         // A surface container using the 'background' color from the theme
         Scaffold(topBar = {
             TicketMobileTabRow(
@@ -69,7 +86,7 @@ fun TicketMobileApp(){
                     CheckTicketScreen()
                 }
                 composable(route = ScanQrCode.route){
-                    ScanQrCodeScreen()
+                    ScanQrCodeScreen(scanResult)
                 }
                 composable(route = SellTicket.route){
                     SellTicketScreen()
