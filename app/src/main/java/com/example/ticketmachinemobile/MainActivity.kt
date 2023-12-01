@@ -76,7 +76,7 @@ fun TicketMobileApp(){
             NavHost(
                 navController = navController,
                 // 设置默认启动页面
-                startDestination = ScanQrCode.route,
+                startDestination = SellTicket.route,
                 modifier = Modifier.padding(innerPadding))
             {
                 composable(route = Overview.route){

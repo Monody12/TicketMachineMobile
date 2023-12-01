@@ -2,10 +2,7 @@ package com.example.ticketmachinemobile.scan
 
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResultCallback
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,7 +21,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -44,6 +39,7 @@ fun ScanQrCodeScreen(mode :String = TicketConstant.CHECK_TICKET) {
     var scannedCode by remember { mutableStateOf("") }
 
     var currentMode by rememberSaveable { mutableStateOf(mode) }
+    var autoExecute by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -75,6 +71,16 @@ fun ScanQrCodeScreen(mode :String = TicketConstant.CHECK_TICKET) {
                 ) {
                     Text(text = "切换")
                 }
+                // 设置自动执行
+                Button(
+                    onClick = {
+                        autoExecute = !autoExecute
+                    },
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(text = "${if (autoExecute) "关闭" else "开启"}自动执行")
+                }
+
             }
         }
 
