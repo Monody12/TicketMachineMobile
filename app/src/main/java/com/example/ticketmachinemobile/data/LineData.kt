@@ -27,10 +27,14 @@ object LineDataRepository {
         return LineData(
             lineName = "测试用线路名称",
             stationList = listOf(
-                Station("站点1", 45, 0, "10:00"),
-                Station("站点2", 0, 10, "10:10"),
-                Station("站点3", 0, 15, "10:20"),
-                Station("站点4", 0, 20, "10:30"),
+//                Station("站点1", 45, 0, "10:00"),
+//                Station("站点2", 0, 10, "10:10"),
+//                Station("站点3", 0, 15, "10:20"),
+//                Station("站点4", 0, 20, "10:30"),
+                Station("站点1", 0, 0, "10:00"),
+                Station("站点2", 0, 0, "10:10"),
+                Station("站点3", 0, 0, "10:20"),
+                Station("站点4", 0, 0, "10:30"),
             )
         )
     }

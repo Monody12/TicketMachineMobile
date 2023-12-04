@@ -1,21 +1,16 @@
 package com.example.ticketmachinemobile
 
-import android.R
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.format.DateFormat
-import android.view.View
-import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.core.view.KeyEventDispatcher.Component
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -24,6 +19,7 @@ import com.example.ticketmachinemobile.components.TicketMobileTabRow
 import com.example.ticketmachinemobile.overview.OverviewScreen
 import com.example.ticketmachinemobile.overview.navigateSingleTopTo
 import com.example.ticketmachinemobile.scan.ScanQrCodeScreen
+import com.example.ticketmachinemobile.ticket.CheckButtonRow
 import com.example.ticketmachinemobile.ticket.CheckTicketScreen
 import com.example.ticketmachinemobile.ticket.SellTicketScreen
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme

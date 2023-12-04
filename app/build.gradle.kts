@@ -33,9 +33,14 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        // 兼容低版本api
+        isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
         jvmTarget = "17"
+    }
+    kotlin {
+        jvmToolchain(17)
     }
     buildFeatures {
         compose = true
@@ -50,6 +55,7 @@ android {
         }
     }
 }
+
 
 dependencies {
 
@@ -84,8 +90,6 @@ dependencies {
     // 工具栏
     implementation("androidx.appcompat:appcompat:1.5.1")
     implementation("com.google.android.material:material:1.4.0")
-    // 日期函数
-    implementation("com.jakewharton.threetenabp:threetenabp:1.3.8")
 
 
     // 申请权限
@@ -100,4 +104,7 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // 兼容低版本api
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.2")
 }
