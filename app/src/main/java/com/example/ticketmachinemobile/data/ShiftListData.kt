@@ -5,6 +5,7 @@ package com.example.ticketmachinemobile.data
  * 线路信息、发车时间、乘客数量、携童数量、已检票数量、班次状态
  */
 data class ShiftData(
+    var id: Int? = null,
     var lineData: LineData?,
     var departureTime: String?,
     var passengerCount: Int?,
@@ -13,6 +14,7 @@ data class ShiftData(
     var shiftStatus: String?
 ){
     constructor() : this(
+        id = null,
         lineData = null,
         departureTime = null,
         passengerCount = null,
@@ -37,6 +39,7 @@ object ShiftRepository {
 
     fun getSimpleShift(): ShiftData {
         return ShiftData(
+            id = 1,
             lineData = LineDataRepository.getSimpleLine(),
             departureTime = "10:00",
             passengerCount = 45,

@@ -1,64 +1,64 @@
 package com.example.ticketmachinemobile.ticket;
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.ticketmachinemobile.components.TicketMobileSelection
+import com.example.ticketmachinemobile.model.SellTicketViewModel
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SellTicketScreen() {
+    val viewModel : SellTicketViewModel = viewModel()
     TicketMachineMobileTheme {
-        Column {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(3.dp)
+        ) {
             DateSelectionScreen()
-            // 售票信息
-            ShiftList({ SellTicketText(22, null) })
-            CheckButtonRow()
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ){
+                // 售票信息
+                ShiftList(showDialog = viewModel.stationDialogShow, { SellTicketText(22, null) })
+                StationDialogSelection(showDialog = viewModel.stationDialogShow,viewModel = viewModel)
+                StationFilterBottomBar(    
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                )
+            }
+
         }
     }
 }
@@ -131,49 +131,43 @@ fun SellTicketText(sellCount: Int?, remainCount: Int?) {
     Text(text = text, modifier = Modifier.padding(top = 3.dp))
 }
 
-@Composable
-fun BottomSheetExample() {
-    var selectedItem by remember { mutableStateOf(0) }
-    val items = listOf("主页", "我喜欢的", "设置")
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text("主页")
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
 
-                    }) {
-                        Icon(Icons.Filled.ArrowBack, null)
-                    }
-                }
-            )
-        },
-        bottomBar = {
-            BottomNavigation {
-                items.forEachIndexed { index, item ->
-                    BottomNavigationItem(
-                        icon = { Icon(Icons.Filled.Favorite, contentDescription = null) },
-                        label = { Text(item) },
-                        selected = selectedItem == index,
-                        onClick = { selectedItem = index }
-                    )
-                }
-            }
-        }
-    ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
-            Text("Content")
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Preview(showBackground = true)
+/**
+ * 站点筛选底部按钮兰
+ */
 @Composable
-fun PreviewDateSelectionScreen() {
-    TicketMachineMobileTheme {
-        CheckButtonRow()
+fun StationFilterBottomBar(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .zIndex(1f) // 设置底部按钮的zIndex
+    ) {
+        // 起始站点
+        var startStation by remember { mutableStateOf("出发站点") }
+        TicketMobileSelection(
+            options = listOf("站点1", "站点2", "站点3"),
+            selectedOption = startStation,
+            onOptionSelected = { startStation = it },
+            expanded = false,
+            modifier = Modifier.weight(1f)
+        )
+        // 结束站点
+        var endStation by remember { mutableStateOf("到达站点") }
+        TicketMobileSelection(
+            options = listOf("站点4", "站点5很长的站点名称啊 啊啊啊啊啊", "站点6"),
+            selectedOption = endStation,
+            onOptionSelected = { endStation = it },
+            expanded = false,
+            modifier = Modifier.weight(1f)
+        )
+        // 结束站点
+//        var endStation by remember { mutableStateOf("到达站点") }
+        TicketMobileSelection(
+            options = listOf("站点4", "站点5", "站点6"),
+            selectedOption = endStation,
+            onOptionSelected = { endStation = it },
+            expanded = false,
+            modifier = Modifier.weight(1f)
+        )
     }
 }

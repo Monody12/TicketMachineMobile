@@ -1,31 +1,48 @@
 package com.example.ticketmachinemobile.ticket
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.example.ticketmachinemobile.data.LineData
+import com.example.ticketmachinemobile.data.LineDataRepository
 import com.example.ticketmachinemobile.data.ShiftData
 import com.example.ticketmachinemobile.data.ShiftRepository
+import com.example.ticketmachinemobile.data.Station
+import com.example.ticketmachinemobile.model.SellTicketViewModel
+
+private val TAG = "ShiftLayout"
 
 /**
  * 班次显示布局
  */
 @Composable
-fun ShiftLayout(shiftData: ShiftData,vararg content: @Composable () -> Unit) {
+fun ShiftLayout(
+    shiftData: ShiftData,
+    clickState: MutableState<Boolean>?,
+    viewModel: SellTicketViewModel,
+    vararg content: @Composable () -> Unit
+) {
     val textWhiteAndCenter =
         MaterialTheme.typography.body1.copy(color = Color.White).copy(textAlign = TextAlign.Center)
     val textWhiteAndCenterSmall =
@@ -58,14 +75,23 @@ fun ShiftLayout(shiftData: ShiftData,vararg content: @Composable () -> Unit) {
             )
 
         }
+        // 如果传入可点击的状态，则布局ui为可点击
+        val clickableModifier = if (clickState != null) {
+            Modifier.clickable {
+                clickState.value = true
+                viewModel.shiftId.value = shiftData.id!!
+            }
+        } else {
+            Modifier
+        }
         // 站点信息
         shiftData.lineData?.stationList?.forEach {
             Row(
-                modifier = Modifier
+                modifier = clickableModifier
                     .fillMaxWidth()
                     .padding(vertical = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 // 站点名称
                 Text(
@@ -118,15 +144,16 @@ fun ShiftLayout(shiftData: ShiftData,vararg content: @Composable () -> Unit) {
  * 班次列表
  */
 @Composable
-fun ShiftList(vararg content: @Composable () -> Unit) {
+fun ShiftList(showDialog: MutableState<Boolean> ?, vararg content: @Composable () -> Unit) {
     val shiftDataList = ShiftRepository.getSimpleShiftList()
     LazyColumn(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(horizontal = 2.dp)
+            .zIndex(0f) // 设置LazyColumn的zIndex
     ) {
         items(shiftDataList.size) { index ->
-            ShiftLayout(shiftDataList[index], *content)
+            ShiftLayout(shiftDataList[index], showDialog, *content)
         }
     }
 }
@@ -135,40 +162,104 @@ fun ShiftList(vararg content: @Composable () -> Unit) {
  * 检票按钮 Row
  */
 @Composable
-fun CheckButtonRow() {
+fun CheckButtonRow(modifier: Modifier = Modifier) {
     // 扫码检票、身份证检票、订单列表 按钮
-    Box(modifier = Modifier.zIndex(1f)){
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 10.dp)
-            ,
-            // 向右对齐
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            // 扫码检票
-            Button(onClick = { /*TODO*/ }) {
-                Text(
-                    text = "扫码检票",
-                    style = MaterialTheme.typography.body2.copy(color = Color.White).copy(textAlign = TextAlign.Center),
-
-                    )
-            }
-            // 身份证检票
-            Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(horizontal = 2.dp)) {
-                Text(
-                    text = "身份证检票",
-                    style = MaterialTheme.typography.body2.copy(color = Color.White).copy(textAlign = TextAlign.Center),
-                )
-            }
-            // 订单列表
-            Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(end = 6.dp)) {
-                Text(
-                    text = "订单列表",
-                    style = MaterialTheme.typography.body2.copy(color = Color.White).copy(textAlign = TextAlign.Center),
-                )
-            }
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp)
+            .zIndex(1f), // 设置底部按钮的zIndex
+        // 向右对齐
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        // 扫码检票
+        Button(onClick = { /*TODO*/ }) {
+            Text(
+                text = "扫码检票",
+                style = MaterialTheme.typography.body2.copy(color = Color.White)
+                    .copy(textAlign = TextAlign.Center),
+            )
+        }
+        // 身份证检票
+        Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(horizontal = 2.dp)) {
+            Text(
+                text = "身份证检票",
+                style = MaterialTheme.typography.body2.copy(color = Color.White)
+                    .copy(textAlign = TextAlign.Center),
+            )
+        }
+        // 订单列表
+        Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(end = 6.dp)) {
+            Text(
+                text = "订单列表",
+                style = MaterialTheme.typography.body2.copy(color = Color.White)
+                    .copy(textAlign = TextAlign.Center),
+            )
         }
     }
+}
+
+@Composable
+fun StationDialogSelection(
+    showDialog: MutableState<Boolean>,
+//    stationList: List<Station> = LineDataRepository.getSimpleLine().stationList,
+    viewModel: SellTicketViewModel
+) {
+    // 打印日志，用户选择的班次id
+    Log.d(TAG, "StationDialogSelection: shiftId = ${viewModel.shiftId.value}")
+    // 站点列表。从viewModel中获取用户点击了哪个班次，然后获取班次对应的线路，然后获取该线路的站点列表
+    val stationList = viewModel.shiftList.find { it.id == viewModel.shiftId.value }?.lineData?.stationList
+        ?: listOf()
+    Log.d(TAG, "StationDialogSelection: stationList = $stationList")
+    if (showDialog.value)
+        AlertDialog(
+            onDismissRequest = {
+                // 关闭 AlertDialog
+                showDialog.value = false
+            },
+            title = {
+                Text(text = "选择下车地点")
+            },
+            text = {
+                // 列表中的选项（除掉第一个）
+                Column(
+                ) {
+                    stationList.forEach {
+                        Text(
+                            text = it.stationName,
+                            style = MaterialTheme.typography.body1,
+                            modifier = Modifier
+                                .padding(bottom = 13.dp)
+                                .fillMaxWidth()
+                                .clickable {
+                                    showDialog.value = false
+                                    viewModel.stationId.value = it.id
+                                    viewModel.stationName.value = it.stationName
+                                }
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        // 关闭 AlertDialog
+                        showDialog.value = false
+                    }
+                ) {
+                    Text(text = "确认")
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        // 关闭 AlertDialog，不执行任何操作
+                        showDialog.value = false
+                    }
+                ) {
+                    Text(text = "取消")
+                }
+            }
+        )
 }

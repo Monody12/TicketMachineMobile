@@ -36,7 +36,7 @@ fun CheckTicketScreen() {
     TicketMachineMobileTheme {
         Column {
             FilterBox()
-            ShiftList({ CheckButtonRow() })
+            ShiftList(null,{ CheckButtonRow() })
         }
     }
 }
