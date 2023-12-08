@@ -5,7 +5,7 @@ package com.example.ticketmachinemobile.data
  * 线路信息、发车时间、乘客数量、携童数量、已检票数量、班次状态
  */
 data class ShiftData(
-    var id: Int? = null,
+    var id: Int?,
     var lineData: LineData?,
     var departureTime: String?,
     var passengerCount: Int?,

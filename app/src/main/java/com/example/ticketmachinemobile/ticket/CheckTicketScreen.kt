@@ -27,8 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.ticketmachinemobile.components.TicketMobileSelection
-import com.example.ticketmachinemobile.data.ShiftData
-import com.example.ticketmachinemobile.data.ShiftRepository
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
 
 @Composable
@@ -36,7 +34,7 @@ fun CheckTicketScreen() {
     TicketMachineMobileTheme {
         Column {
             FilterBox()
-            ShiftList(null,{ CheckButtonRow() })
+            ShiftList(null,null,{ CheckButtonRow() })
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.ticketmachinemobile;
+package com.example.ticketmachinemobile.activity;
 
 import android.Manifest;
 import android.content.Intent;
@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.ticketmachinemobile.R;
 import com.example.ticketmachinemobile.constant.TicketConstant;
 import com.example.ticketmachinemobile.scan.zxing.ZXingView;
 import com.example.ticketmachinemobile.scan.zxing.core.BarcodeType;

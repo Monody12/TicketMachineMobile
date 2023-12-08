@@ -6,11 +6,11 @@
     <data>
         <variable
             name="dataBinding"
-            type="com.example.ticketmachinemobile.ScanActivity" />
+            type="com.example.ticketmachinemobile.activity.ScanActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        tools:context=".ScanActivity"
+        tools:context=".activity.ScanActivity"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

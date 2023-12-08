@@ -1,7 +1,7 @@
 package com.example.ticketmachinemobile.ticket
 
+import android.content.Intent
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,18 +17,16 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.example.ticketmachinemobile.data.LineData
-import com.example.ticketmachinemobile.data.LineDataRepository
+import com.example.ticketmachinemobile.activity.SellTicketPayActivity
 import com.example.ticketmachinemobile.data.ShiftData
 import com.example.ticketmachinemobile.data.ShiftRepository
-import com.example.ticketmachinemobile.data.Station
 import com.example.ticketmachinemobile.model.SellTicketViewModel
 
 private val TAG = "ShiftLayout"
@@ -40,7 +38,7 @@ private val TAG = "ShiftLayout"
 fun ShiftLayout(
     shiftData: ShiftData,
     clickState: MutableState<Boolean>?,
-    viewModel: SellTicketViewModel,
+    updateShiftClickEvent: ((Int?, String?) -> Unit)?,
     vararg content: @Composable () -> Unit
 ) {
     val textWhiteAndCenter =
@@ -79,7 +77,9 @@ fun ShiftLayout(
         val clickableModifier = if (clickState != null) {
             Modifier.clickable {
                 clickState.value = true
-                viewModel.shiftId.value = shiftData.id!!
+                if (updateShiftClickEvent != null) {
+                    updateShiftClickEvent(shiftData.id, shiftData.lineData?.lineName)
+                }
             }
         } else {
             Modifier
@@ -144,7 +144,11 @@ fun ShiftLayout(
  * 班次列表
  */
 @Composable
-fun ShiftList(showDialog: MutableState<Boolean> ?, vararg content: @Composable () -> Unit) {
+fun ShiftList(
+    showDialog: MutableState<Boolean> ?,
+    updateShiftClickEvent: ((Int?, String?) -> Unit)?,
+    vararg content: @Composable () -> Unit
+) {
     val shiftDataList = ShiftRepository.getSimpleShiftList()
     LazyColumn(
         modifier = Modifier
@@ -153,7 +157,7 @@ fun ShiftList(showDialog: MutableState<Boolean> ?, vararg content: @Composable (
             .zIndex(0f) // 设置LazyColumn的zIndex
     ) {
         items(shiftDataList.size) { index ->
-            ShiftLayout(shiftDataList[index], showDialog, *content)
+            ShiftLayout(shiftDataList[index], showDialog, updateShiftClickEvent,*content)
         }
     }
 }
@@ -200,18 +204,20 @@ fun CheckButtonRow(modifier: Modifier = Modifier) {
     }
 }
 
+/**
+ * 选择下车地点
+ */
 @Composable
 fun StationDialogSelection(
     showDialog: MutableState<Boolean>,
 //    stationList: List<Station> = LineDataRepository.getSimpleLine().stationList,
+
     viewModel: SellTicketViewModel
 ) {
-    // 打印日志，用户选择的班次id
-    Log.d(TAG, "StationDialogSelection: shiftId = ${viewModel.shiftId.value}")
+    val context = LocalContext.current
     // 站点列表。从viewModel中获取用户点击了哪个班次，然后获取班次对应的线路，然后获取该线路的站点列表
     val stationList = viewModel.shiftList.find { it.id == viewModel.shiftId.value }?.lineData?.stationList
         ?: listOf()
-    Log.d(TAG, "StationDialogSelection: stationList = $stationList")
     if (showDialog.value)
         AlertDialog(
             onDismissRequest = {
@@ -236,6 +242,9 @@ fun StationDialogSelection(
                                     showDialog.value = false
                                     viewModel.stationId.value = it.id
                                     viewModel.stationName.value = it.stationName
+                                    // 启动售票支付Activity
+                                    val intent = Intent(context, SellTicketPayActivity::class.java)
+                                    context.startActivity(intent)
                                 }
                         )
                     }

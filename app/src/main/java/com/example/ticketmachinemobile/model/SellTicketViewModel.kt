@@ -44,4 +44,9 @@ class SellTicketViewModel : ViewModel() {
         stationId.value = id
     }
 
+    fun updateShiftClickEvent(id: Int?, name: String?) {
+        shiftId.value = id ?: 0
+        shiftName.value = name ?: ""
+    }
+
 }

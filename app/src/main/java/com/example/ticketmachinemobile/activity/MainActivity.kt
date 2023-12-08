@@ -1,4 +1,4 @@
-package com.example.ticketmachinemobile
+package com.example.ticketmachinemobile.activity
 
 import android.app.Activity
 import android.content.Intent
@@ -15,13 +15,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.ticketmachinemobile.CheckTicket
+import com.example.ticketmachinemobile.Overview
+import com.example.ticketmachinemobile.ScanQrCode
+import com.example.ticketmachinemobile.SellTicket
 import com.example.ticketmachinemobile.components.TicketMobileTabRow
 import com.example.ticketmachinemobile.overview.OverviewScreen
 import com.example.ticketmachinemobile.overview.navigateSingleTopTo
 import com.example.ticketmachinemobile.scan.ScanQrCodeScreen
-import com.example.ticketmachinemobile.ticket.CheckButtonRow
 import com.example.ticketmachinemobile.ticket.CheckTicketScreen
 import com.example.ticketmachinemobile.ticket.SellTicketScreen
+import com.example.ticketmachinemobile.ticketMobileTabRowScreens
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
 
 

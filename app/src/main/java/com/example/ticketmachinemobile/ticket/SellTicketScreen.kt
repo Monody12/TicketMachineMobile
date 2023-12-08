@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.Button
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -51,7 +50,10 @@ fun SellTicketScreen() {
                     .fillMaxWidth()
             ){
                 // 售票信息
-                ShiftList(showDialog = viewModel.stationDialogShow, { SellTicketText(22, null) })
+                ShiftList(
+                    showDialog = viewModel.stationDialogShow,
+                    updateShiftClickEvent = viewModel::updateShiftClickEvent,
+                    { SellTicketText(22, null) })
                 StationDialogSelection(showDialog = viewModel.stationDialogShow,viewModel = viewModel)
                 StationFilterBottomBar(    
                     modifier = Modifier
