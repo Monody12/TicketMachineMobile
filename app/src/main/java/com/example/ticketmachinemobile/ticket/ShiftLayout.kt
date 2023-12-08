@@ -212,7 +212,7 @@ fun StationDialogSelection(
     showDialog: MutableState<Boolean>,
 //    stationList: List<Station> = LineDataRepository.getSimpleLine().stationList,
 
-    viewModel: SellTicketViewModel
+    viewModel: SellTicketViewModel.Companion
 ) {
     val context = LocalContext.current
     // 站点列表。从viewModel中获取用户点击了哪个班次，然后获取班次对应的线路，然后获取该线路的站点列表

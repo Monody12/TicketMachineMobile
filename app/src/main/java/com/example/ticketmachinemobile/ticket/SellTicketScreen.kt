@@ -24,9 +24,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.ticketmachinemobile.MyApplication
 import com.example.ticketmachinemobile.components.TicketMobileSelection
 import com.example.ticketmachinemobile.model.SellTicketViewModel
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
@@ -37,7 +39,7 @@ import java.util.Locale
 
 @Composable
 fun SellTicketScreen() {
-    val viewModel : SellTicketViewModel = viewModel()
+    val viewModel  = SellTicketViewModel.Companion
     TicketMachineMobileTheme {
         Column(
             modifier = Modifier
@@ -52,7 +54,7 @@ fun SellTicketScreen() {
                 // 售票信息
                 ShiftList(
                     showDialog = viewModel.stationDialogShow,
-                    updateShiftClickEvent = viewModel::updateShiftClickEvent,
+                    updateShiftClickEvent = SellTicketViewModel::updateShiftClickEvent,
                     { SellTicketText(22, null) })
                 StationDialogSelection(showDialog = viewModel.stationDialogShow,viewModel = viewModel)
                 StationFilterBottomBar(    

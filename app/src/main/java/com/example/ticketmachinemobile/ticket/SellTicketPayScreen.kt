@@ -1,8 +1,17 @@
 package com.example.ticketmachinemobile.ticket
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -10,21 +19,29 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.ticketmachinemobile.MyApplication
 import com.example.ticketmachinemobile.activity.SellTicketPayActivity
+import com.example.ticketmachinemobile.data.Passenger
+import com.example.ticketmachinemobile.model.SellTicketViewModel
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
 
 @Composable
-fun SellTicketPayScreen () {
+fun SellTicketPayScreen() {
     TicketMachineMobileTheme {
-        SellTicketPayTopBar()
+        Column {
+            SellTicketPayTopBar()
+            SellTicketPayScreenContent()
+        }
     }
 }
 
 @Composable
-fun SellTicketPayTopBar(){
+fun SellTicketPayTopBar() {
     val context = LocalContext.current
     // 顶部应用栏
     TopAppBar(
@@ -58,8 +75,57 @@ fun SellTicketPayTopBar(){
                 )
             }
         },
-        backgroundColor = MaterialTheme.colors.primaryVariant,
+        backgroundColor = MaterialTheme.colors.secondaryVariant,
     )
+}
+
+@Composable
+fun SellTicketPayScreenContent() {
+    val viewModel = SellTicketViewModel.Companion
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colors.primary)
+    ) {
+        Column(
+            modifier = Modifier.padding(7.dp)
+        ) {
+            Text(text = "线路：${viewModel.shiftName.value}")
+            Text(text = "到达站点：${viewModel.stationName.value}")
+            PassengerList()
+        }
+    }
+}
+
+/**
+ * 乘客列表
+ */
+@Composable
+fun PassengerList() {
+    val passengerList  = mutableListOf<Passenger>()
+    Surface(
+        modifier = Modifier
+            .padding(7.dp)
+            .background(color = MaterialTheme.colors.secondaryVariant)
+    ) {
+        Column(
+
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "乘客列表")
+                Text(text = "${passengerList.size}人")
+            }
+            Button(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
+                Text(text = "添加乘客")
+            }
+        }
+    }
 }
 
 @Preview(showBackground = true)

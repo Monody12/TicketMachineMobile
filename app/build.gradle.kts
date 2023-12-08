@@ -90,6 +90,8 @@ dependencies {
     // 工具栏
     implementation("androidx.appcompat:appcompat:1.5.1")
     implementation("com.google.android.material:material:1.4.0")
+    // activity-ktx
+    implementation("androidx.activity:activity-ktx:1.8.1")
 
 
     // 申请权限
