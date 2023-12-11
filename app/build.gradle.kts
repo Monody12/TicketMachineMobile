@@ -74,6 +74,8 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     // huawei Scan Kit
     implementation("com.huawei.hms:scanplus:2.12.0.301")
+    implementation(files("libs/OTG.jar"))
+    implementation(files("libs/OTG.jar"))
     // 扫码
     // 相机
     val cameraxVersion = "1.2.0-alpha04"
@@ -97,6 +99,9 @@ dependencies {
     // 申请权限
     val accompanistVersion = "0.23.1"
     implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
+    // 读卡器依赖
+    implementation(files("libs/OTG.jar"))
+    api("org.greenrobot:eventbus:3.2.0")
 
 
     testImplementation("junit:junit:4.13.2")

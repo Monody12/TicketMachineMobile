@@ -251,14 +251,7 @@ fun StationDialogSelection(
                 }
             },
             confirmButton = {
-                Button(
-                    onClick = {
-                        // 关闭 AlertDialog
-                        showDialog.value = false
-                    }
-                ) {
-                    Text(text = "确认")
-                }
+
             },
             dismissButton = {
                 Button(

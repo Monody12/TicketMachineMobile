@@ -1,6 +1,7 @@
 package com.example.ticketmachinemobile.model
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.ticketmachinemobile.data.ShiftRepository
 
@@ -31,7 +32,6 @@ class SellTicketViewModel : ViewModel() {
          * 售票选择站点弹窗状态
          */
         var stationDialogShow = mutableStateOf(false)
-
         /**
          * 售票选中班次事件
          */

@@ -4,14 +4,16 @@ data class Passenger(
     /**
      * 证件类型
      */
-    var idType: String,
+    var idType: String?,
     /**
      * 证件号码
      */
-    var idNumber: String,
+    var idNumber: String?,
     /**
      * 姓名
      */
-    var name: String
-)
+    var name: String?
+) {
+    constructor() : this("", "", "")
+}
 

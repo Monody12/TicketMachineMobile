@@ -1,12 +1,15 @@
 package com.example.ticketmachinemobile.ticket
 
+import android.content.Intent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -36,6 +39,7 @@ fun SellTicketPayScreen() {
         Column {
             SellTicketPayTopBar()
             SellTicketPayScreenContent()
+            AddPassengerDialog()
         }
     }
 }
@@ -121,11 +125,58 @@ fun PassengerList() {
                 Text(text = "乘客列表")
                 Text(text = "${passengerList.size}人")
             }
-            Button(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
+            Text(text = "stationDialogShow.value: ${SellTicketViewModel.Companion.stationDialogShow.value}")
+            Button(onClick = {
+                // 打开添加乘客对话框
+                SellTicketViewModel.Companion.stationDialogShow.value = SellTicketViewModel.Companion.stationDialogShow.value.not()
+            }, modifier = Modifier.fillMaxWidth()) {
                 Text(text = "添加乘客")
             }
         }
     }
+}
+
+@Composable
+fun AddPassengerDialog() {
+    val showDialog = SellTicketViewModel.Companion.stationDialogShow
+    if (showDialog.value == true) {
+        AlertDialog(
+            onDismissRequest = {
+                showDialog.value = false
+            },
+            title = {
+                Text(text = "添加乘客信息")
+            },
+            text = {
+                Column(
+                ) {
+
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDialog.value = false
+
+                    }
+                ) {
+                    Text(text = "摄像头识别")
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        showDialog.value = false
+                    }
+                ) {
+                    Text(text = "手动输入")
+                }
+            }
+        )
+    }else{
+
+    }
+
 }
 
 @Preview(showBackground = true)
