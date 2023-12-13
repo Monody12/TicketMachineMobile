@@ -7,6 +7,7 @@ import android.os.Message
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.MutableState
 import com.example.ticketmachinemobile.data.Passenger
 import com.example.ticketmachinemobile.model.SellTicketPayViewModel
 import com.example.ticketmachinemobile.ticket.SellTicketPayScreen
@@ -22,8 +23,11 @@ class SellTicketPayActivity : ComponentActivity()  {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val viewModel = SellTicketPayViewModel.Companion
         setContent {
-            SellTicketPayScreen()
+            SellTicketPayScreen(
+                onAddPassengerDialogShowChange = { addPassengerDialogOnChange(viewModel.addPassengerDialogShow) }
+            )
         }
         val handler: Handler = object : Handler(Looper.getMainLooper()) {
             override fun handleMessage(msg: Message) {
@@ -32,14 +36,7 @@ class SellTicketPayActivity : ComponentActivity()  {
         }
         idCard = IDCardSDK.getInstance()
         idCard.initSDK(handler, this)
-        // 设置监听事件
-        SellTicketPayViewModel.Companion.addPassengerDialogShow.observe(this) {
-            if (it) {
-                idCard.StartReadCard()
-            } else {
-                idCard.StopReadCard()
-            }
-        }
+
     }
 
     override fun onDestroy() {
@@ -53,6 +50,7 @@ class SellTicketPayActivity : ComponentActivity()  {
         if (cardInfo != null) {
             addPassenger(cardInfo.idCard, cardInfo.peopleName)
 //            dialog.dismiss()
+            SellTicketPayViewModel.Companion.addPassengerDialogShow.value = false
             idCard.StopReadCard()
 //            dialog = null
         }
@@ -68,6 +66,16 @@ class SellTicketPayActivity : ComponentActivity()  {
             Toast.makeText(this, "添加成功：${passenger.toString()}", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun addPassengerDialogOnChange(state: MutableState<Boolean>){
+        if (state.value == true) {
+            Toast.makeText(this, "请放入身份证", Toast.LENGTH_SHORT).show()
+            idCard.StartReadCard()
+        } else {
+            Toast.makeText(this, "请取出身份证", Toast.LENGTH_SHORT).show()
+            idCard.StopReadCard()
         }
     }
 

@@ -15,7 +15,8 @@ class SellTicketPayViewModel : ViewModel() {
         /**
          * 添加乘客对话框显示状态
          */
-        var addPassengerDialogShow : MutableLiveData<Boolean> = MutableLiveData(false)
+        var addPassengerDialogShow = mutableStateOf(false)
+//        var addPassengerDialogShow : MutableLiveData<Boolean> = MutableLiveData(false)
 
         /**
          * 清空乘客列表

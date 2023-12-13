@@ -34,12 +34,12 @@ import com.example.ticketmachinemobile.model.SellTicketViewModel
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
 
 @Composable
-fun SellTicketPayScreen() {
+fun SellTicketPayScreen(onAddPassengerDialogShowChange: (Boolean) -> Unit = {}) {
     TicketMachineMobileTheme {
         Column {
             SellTicketPayTopBar()
             SellTicketPayScreenContent()
-            AddPassengerDialog()
+            AddPassengerDialog(onAddPassengerDialogShowChange)
         }
     }
 }
@@ -84,7 +84,7 @@ fun SellTicketPayTopBar() {
 }
 
 @Composable
-fun SellTicketPayScreenContent() {
+fun SellTicketPayScreenContent(onAddPassengerDialogShowChange: (Boolean) -> Unit = {}) {
     val viewModel = SellTicketViewModel.Companion
     Surface(
         modifier = Modifier
@@ -96,7 +96,7 @@ fun SellTicketPayScreenContent() {
         ) {
             Text(text = "线路：${viewModel.shiftName.value}")
             Text(text = "到达站点：${viewModel.stationName.value}")
-            PassengerList()
+            PassengerList(onAddPassengerDialogShowChange)
         }
     }
 }
@@ -105,7 +105,7 @@ fun SellTicketPayScreenContent() {
  * 乘客列表
  */
 @Composable
-fun PassengerList() {
+fun PassengerList(onAddPassengerDialogShowChange: (Boolean) -> Unit = {}) {
     val passengerList  = mutableListOf<Passenger>()
     Surface(
         modifier = Modifier
@@ -129,6 +129,7 @@ fun PassengerList() {
             Button(onClick = {
                 // 打开添加乘客对话框
                 SellTicketViewModel.Companion.stationDialogShow.value = SellTicketViewModel.Companion.stationDialogShow.value.not()
+                onAddPassengerDialogShowChange(SellTicketViewModel.Companion.stationDialogShow.value)
             }, modifier = Modifier.fillMaxWidth()) {
                 Text(text = "添加乘客")
             }
@@ -137,12 +138,13 @@ fun PassengerList() {
 }
 
 @Composable
-fun AddPassengerDialog() {
+fun AddPassengerDialog(onAddPassengerDialogShowChange: (Boolean) -> Unit = {}) {
     val showDialog = SellTicketViewModel.Companion.stationDialogShow
     if (showDialog.value == true) {
         AlertDialog(
             onDismissRequest = {
                 showDialog.value = false
+                onAddPassengerDialogShowChange(showDialog.value)
             },
             title = {
                 Text(text = "添加乘客信息")
@@ -154,19 +156,20 @@ fun AddPassengerDialog() {
                 }
             },
             confirmButton = {
-                Button(
-                    onClick = {
-                        showDialog.value = false
-
-                    }
-                ) {
-                    Text(text = "摄像头识别")
-                }
+//                Button(
+//                    onClick = {
+//                        showDialog.value = false
+//
+//                    }
+//                ) {
+//                    Text(text = "摄像头识别")
+//                }
             },
             dismissButton = {
                 Button(
                     onClick = {
                         showDialog.value = false
+                        onAddPassengerDialogShowChange(showDialog.value)
                     }
                 ) {
                     Text(text = "手动输入")
