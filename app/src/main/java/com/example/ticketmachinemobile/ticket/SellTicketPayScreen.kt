@@ -38,7 +38,7 @@ fun SellTicketPayScreen(onAddPassengerDialogShowChange: (Boolean) -> Unit = {}) 
     TicketMachineMobileTheme {
         Column {
             SellTicketPayTopBar()
-            SellTicketPayScreenContent()
+            SellTicketPayScreenContent(onAddPassengerDialogShowChange)
             AddPassengerDialog(onAddPassengerDialogShowChange)
         }
     }
