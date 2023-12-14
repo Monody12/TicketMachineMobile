@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.example.ticketmachinemobile.MyApplication
 import com.example.ticketmachinemobile.activity.SellTicketPayActivity
 import com.example.ticketmachinemobile.data.Passenger
+import com.example.ticketmachinemobile.model.SellTicketPayViewModel
 import com.example.ticketmachinemobile.model.SellTicketViewModel
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
 
@@ -140,7 +141,7 @@ fun PassengerList(onAddPassengerDialogShowChange: () -> Unit) {
 
 @Composable
 fun AddPassengerDialog(onAddPassengerDialogShowChange: () -> Unit) {
-    val showDialog = SellTicketViewModel.Companion.stationDialogShow
+    val showDialog = SellTicketPayViewModel.addPassengerDialogShow
     if (showDialog.value == true) {
         AlertDialog(
             onDismissRequest = {

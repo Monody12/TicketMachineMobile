@@ -74,7 +74,7 @@ class SellTicketPayActivity : ComponentActivity()  {
     }
 
     private fun addPassengerDialogOnChange(){
-        val stateValue = SellTicketViewModel.Companion.stationDialogShow.value
+        val stateValue = SellTicketPayViewModel.addPassengerDialogShow.value
         println(stateValue)
         if (stateValue) {
             Toast.makeText(this, "请放入身份证", Toast.LENGTH_SHORT).show()
