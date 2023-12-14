@@ -16,7 +16,6 @@ class SellTicketPayViewModel : ViewModel() {
          * 添加乘客对话框显示状态
          */
         var addPassengerDialogShow = mutableStateOf(false)
-//        var addPassengerDialogShow : MutableLiveData<Boolean> = MutableLiveData(false)
 
         /**
          * 清空乘客列表
@@ -29,11 +28,12 @@ class SellTicketPayViewModel : ViewModel() {
          * 如果类型和证件号码相同，则抛出异常
          */
         fun addPassenger(passenger: Passenger) {
-            passengerList.forEach {
-                if (it.idType == passenger.idType && it.idNumber == passenger.idNumber) {
-                    throw Exception("乘客已存在")
-                }
-            }
+            // TODO 调试时不开启乘客已存在判断
+//            passengerList.forEach {
+//                if (it.idType == passenger.idType && it.idNumber == passenger.idNumber) {
+//                    throw Exception("乘客已存在")
+//                }
+//            }
             passengerList.add(passenger)
         }
     }

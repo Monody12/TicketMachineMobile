@@ -7,13 +7,14 @@ import android.os.Message
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.MutableState
 import com.example.ticketmachinemobile.data.Passenger
 import com.example.ticketmachinemobile.model.SellTicketPayViewModel
+import com.example.ticketmachinemobile.model.SellTicketViewModel
 import com.example.ticketmachinemobile.ticket.SellTicketPayScreen
 import com.example.ticketmachinemobile.util.IDCardSDK
 import com.example.ticketmachinemobile.util.ReadCardEvent
 import com.huashi.otg.sdk.HSIDCardInfo
+import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
@@ -26,7 +27,7 @@ class SellTicketPayActivity : ComponentActivity()  {
         val viewModel = SellTicketPayViewModel.Companion
         setContent {
             SellTicketPayScreen(
-                onAddPassengerDialogShowChange = { addPassengerDialogOnChange(viewModel.addPassengerDialogShow) }
+                onAddPassengerDialogShowChange = { addPassengerDialogOnChange() }
             )
         }
         val handler: Handler = object : Handler(Looper.getMainLooper()) {
@@ -35,13 +36,18 @@ class SellTicketPayActivity : ComponentActivity()  {
             }
         }
         idCard = IDCardSDK.getInstance()
-        idCard.initSDK(handler, this)
+        val initSDK = idCard.initSDK(handler, this)
+        Toast.makeText(this, "initSDK: $initSDK", Toast.LENGTH_SHORT).show()
+        // 注册事件总线
+        EventBus.getDefault().register(this)
 
     }
 
     override fun onDestroy() {
         super.onDestroy()
         idCard.unInitSDK()
+        // 注销事件总线
+        EventBus.getDefault().unregister(this)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -49,10 +55,8 @@ class SellTicketPayActivity : ComponentActivity()  {
         val cardInfo: HSIDCardInfo = readCardEvent.getCardInfo()
         if (cardInfo != null) {
             addPassenger(cardInfo.idCard, cardInfo.peopleName)
-//            dialog.dismiss()
             SellTicketPayViewModel.Companion.addPassengerDialogShow.value = false
-            idCard.StopReadCard()
-//            dialog = null
+            addPassengerDialogOnChange()
         }
     }
 
@@ -69,8 +73,10 @@ class SellTicketPayActivity : ComponentActivity()  {
         }
     }
 
-    private fun addPassengerDialogOnChange(state: MutableState<Boolean>){
-        if (state.value == true) {
+    private fun addPassengerDialogOnChange(){
+        val stateValue = SellTicketViewModel.Companion.stationDialogShow.value
+        println(stateValue)
+        if (stateValue) {
             Toast.makeText(this, "请放入身份证", Toast.LENGTH_SHORT).show()
             idCard.StartReadCard()
         } else {

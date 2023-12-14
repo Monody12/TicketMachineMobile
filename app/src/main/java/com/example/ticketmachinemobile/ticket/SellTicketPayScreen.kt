@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -34,7 +35,7 @@ import com.example.ticketmachinemobile.model.SellTicketViewModel
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
 
 @Composable
-fun SellTicketPayScreen(onAddPassengerDialogShowChange: (Boolean) -> Unit = {}) {
+fun SellTicketPayScreen(onAddPassengerDialogShowChange: () -> Unit) {
     TicketMachineMobileTheme {
         Column {
             SellTicketPayTopBar()
@@ -84,7 +85,7 @@ fun SellTicketPayTopBar() {
 }
 
 @Composable
-fun SellTicketPayScreenContent(onAddPassengerDialogShowChange: (Boolean) -> Unit = {}) {
+fun SellTicketPayScreenContent(onAddPassengerDialogShowChange: () -> Unit) {
     val viewModel = SellTicketViewModel.Companion
     Surface(
         modifier = Modifier
@@ -105,7 +106,7 @@ fun SellTicketPayScreenContent(onAddPassengerDialogShowChange: (Boolean) -> Unit
  * 乘客列表
  */
 @Composable
-fun PassengerList(onAddPassengerDialogShowChange: (Boolean) -> Unit = {}) {
+fun PassengerList(onAddPassengerDialogShowChange: () -> Unit) {
     val passengerList  = mutableListOf<Passenger>()
     Surface(
         modifier = Modifier
@@ -128,8 +129,8 @@ fun PassengerList(onAddPassengerDialogShowChange: (Boolean) -> Unit = {}) {
             Text(text = "stationDialogShow.value: ${SellTicketViewModel.Companion.stationDialogShow.value}")
             Button(onClick = {
                 // 打开添加乘客对话框
-                SellTicketViewModel.Companion.stationDialogShow.value = SellTicketViewModel.Companion.stationDialogShow.value.not()
-                onAddPassengerDialogShowChange(SellTicketViewModel.Companion.stationDialogShow.value)
+                SellTicketViewModel.Companion.stationDialogShow.value = true
+                onAddPassengerDialogShowChange()
             }, modifier = Modifier.fillMaxWidth()) {
                 Text(text = "添加乘客")
             }
@@ -138,13 +139,13 @@ fun PassengerList(onAddPassengerDialogShowChange: (Boolean) -> Unit = {}) {
 }
 
 @Composable
-fun AddPassengerDialog(onAddPassengerDialogShowChange: (Boolean) -> Unit = {}) {
+fun AddPassengerDialog(onAddPassengerDialogShowChange: () -> Unit) {
     val showDialog = SellTicketViewModel.Companion.stationDialogShow
     if (showDialog.value == true) {
         AlertDialog(
             onDismissRequest = {
                 showDialog.value = false
-                onAddPassengerDialogShowChange(showDialog.value)
+                onAddPassengerDialogShowChange()
             },
             title = {
                 Text(text = "添加乘客信息")
@@ -169,7 +170,7 @@ fun AddPassengerDialog(onAddPassengerDialogShowChange: (Boolean) -> Unit = {}) {
                 Button(
                     onClick = {
                         showDialog.value = false
-                        onAddPassengerDialogShowChange(showDialog.value)
+                        onAddPassengerDialogShowChange()
                     }
                 ) {
                     Text(text = "手动输入")
@@ -180,10 +181,4 @@ fun AddPassengerDialog(onAddPassengerDialogShowChange: (Boolean) -> Unit = {}) {
 
     }
 
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SellTicketPayScreenPreview() {
-    SellTicketPayScreen()
 }
