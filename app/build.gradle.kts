@@ -75,7 +75,6 @@ dependencies {
     // huawei Scan Kit
     implementation("com.huawei.hms:scanplus:2.12.0.301")
     implementation(files("libs/OTG.jar"))
-    implementation(files("libs/OTG.jar"))
     // 扫码
     // 相机
     val cameraxVersion = "1.2.0-alpha04"
