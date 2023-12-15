@@ -1,5 +1,6 @@
 package com.example.ticketmachinemobile.model
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,7 +11,7 @@ class SellTicketPayViewModel : ViewModel() {
         /**
          * 乘客列表
          */
-        var passengerList = mutableListOf<Passenger>()
+        var passengerList = mutableStateListOf<Passenger>()
 
         /**
          * 添加乘客对话框显示状态
@@ -35,6 +36,12 @@ class SellTicketPayViewModel : ViewModel() {
 //                }
 //            }
             passengerList.add(passenger)
+        }
+        /**
+         * 删除乘客
+         */
+        fun deletePassenger(passenger: Passenger) {
+            passengerList.remove(passenger)
         }
     }
 }
