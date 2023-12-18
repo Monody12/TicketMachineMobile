@@ -49,6 +49,7 @@ class SellTicketPayViewModel : ViewModel() {
         fun clearPassengerList() {
             passengerList.clear()
         }
+
         /**
          * 添加乘客
          * 如果类型和证件号码相同，则抛出异常
@@ -62,6 +63,7 @@ class SellTicketPayViewModel : ViewModel() {
 //            }
             passengerList.add(passenger)
         }
+
         /**
          * 删除乘客
          */
@@ -93,5 +95,6 @@ class SellTicketPayViewModel : ViewModel() {
                 "外国人永久居留身份证",
                 "其他"
             )
+        }
     }
 }
