@@ -1,3 +1,5 @@
+import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -10,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.ticketmachinemobile"
-        minSdk = 24
+        minSdk = 22
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -19,6 +21,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
     }
 
     buildTypes {
@@ -75,6 +78,7 @@ dependencies {
     // huawei Scan Kit
     implementation("com.huawei.hms:scanplus:2.12.0.301")
     implementation(files("libs/OTG.jar"))
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     // 扫码
     // 相机
     val cameraxVersion = "1.2.0-alpha04"
@@ -86,8 +90,6 @@ dependencies {
 //    implementation("com.google.mlkit:barcode-scanning:17.0.2")
 //    implementation("com.google.mlkit:text-recognition:16.0.0-beta4")
 //    implementation("com.google.mlkit:text-recognition-chinese:16.0.0-beta4")
-    // zxing
-    implementation("com.google.zxing:core:3.4.1")
     // 工具栏
     implementation("androidx.appcompat:appcompat:1.5.1")
     implementation("com.google.android.material:material:1.4.0")
@@ -98,10 +100,12 @@ dependencies {
     // 申请权限
     val accompanistVersion = "0.23.1"
     implementation("com.google.accompanist:accompanist-permissions:$accompanistVersion")
-    // 读卡器依赖
-    implementation(files("libs/OTG.jar"))
+    // zxing
+    implementation("com.google.zxing:core:3.4.1")
+    // 手持机身份证读卡器依赖
     api("org.greenrobot:eventbus:3.2.0")
-
+    api(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    api(files("libs/qspdasdk.jar"))
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -113,4 +117,10 @@ dependencies {
 
     // 兼容低版本api
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.2")
+}
+
+configurations {
+    all {
+        exclude(group = "com.google.zxing", module = "core")
+    }
 }

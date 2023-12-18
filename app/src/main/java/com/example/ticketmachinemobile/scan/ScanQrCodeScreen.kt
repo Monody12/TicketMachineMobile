@@ -25,7 +25,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ticketmachinemobile.activity.ScanActivity
 import com.example.ticketmachinemobile.constant.TicketConstant
 
 
@@ -107,8 +106,8 @@ fun ScanQrCodeScreen(mode :String = TicketConstant.CHECK_TICKET) {
         Button(
             onClick = {
                 // 启动一个扫码界面
-                val intent = Intent(context, ScanActivity::class.java)
-                scanLauncher.launch(intent)
+//                val intent = Intent(context, ScanActivity::class.java)
+//                scanLauncher.launch(intent)
             },
             modifier = Modifier
                 .fillMaxWidth()

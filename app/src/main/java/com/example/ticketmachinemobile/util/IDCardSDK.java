@@ -1,19 +1,22 @@
 package com.example.ticketmachinemobile.util;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Environment;
-import android.os.Handler;
-import android.util.Log;
+import android.widget.Toast;
+import android.zyapi.CommonApi;
 
-import com.huashi.otg.sdk.HSIDCardInfo;
-import com.huashi.otg.sdk.HsOtgApi;
+import com.zkteco.android.biometric.core.device.ParameterHelper;
+import com.zkteco.android.biometric.core.device.TransportType;
+import com.zkteco.android.biometric.module.idcard.IDCardReader;
+import com.zkteco.android.biometric.module.idcard.IDCardReaderFactory;
+import com.zkteco.android.biometric.module.idcard.IDCardType;
+import com.zkteco.android.biometric.module.idcard.exception.IDCardReaderException;
+import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class IDCardSDK {
 
@@ -21,16 +24,16 @@ public class IDCardSDK {
 
     private static IDCardSDK idCardSDK;
 
-    public static final int INIT_SUCCESS = 1;
 
     private static Thread readCardThread;
 
-    private String filepath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/wltlib";
-
-
-    private HsOtgApi hsOtgApi;
     private static volatile boolean isReadingCard = false;
-    private Handler handler;
+
+    private CommonApi mCommonApi;
+    private IDCardReader idCardReader = null;
+    private String serialName = "/dev/ttyMT3";
+
+
 
     private IDCardSDK() {
 
@@ -44,22 +47,96 @@ public class IDCardSDK {
     }
 
 
-    public int initSDK(Handler handler, Context context) {
-        this.handler = handler;
-
-        hsOtgApi = new HsOtgApi(handler, context);
-        // 因为第一次需要点击授权，所以第一次点击时候的返回是-1所以我利用了广播接受到授权后用handler发送消息
-        int ret = hsOtgApi.init();
-
-        if (ret == INIT_SUCCESS) {
-            Log.i("initSDK", "初始化 身份证读卡器成功");
-        }
-        return ret;
+    public void initSDK(Context context) {
+        int ret = openGPIO(context);
+        if(ret!=0)
+            return;
+        openDevice(context);
     }
 
     public void unInitSDK() {
-        hsOtgApi.unInit();
+        closeDevice();
+        closeGPIO();
     }
+
+    public void closeGPIO() {
+
+        mCommonApi.setGpioMode(53, 0);
+        mCommonApi.setGpioDir(53, 1);
+        mCommonApi.setGpioOut(53, 0);
+
+        mCommonApi.setGpioMode(83, 0);
+        mCommonApi.setGpioDir(83, 1);
+        mCommonApi.setGpioOut(83, 0);
+
+    }
+
+    public int openGPIO(Context context) {
+
+        mCommonApi = new CommonApi();
+
+        mCommonApi.setGpioMode(53, 0);
+        mCommonApi.setGpioDir(53, 1);
+        int ret = mCommonApi.setGpioOut(53, 1);
+
+        mCommonApi.setGpioMode(83, 0);
+        mCommonApi.setGpioDir(83, 1);
+        mCommonApi.setGpioOut(83, 1);
+
+        mCommonApi.setGpioMode(68, 0);
+        mCommonApi.setGpioDir(68, 1);
+        mCommonApi.setGpioOut(68, 1);
+
+        if (ret == 0) {
+            Toast.makeText(context, "身份证模块初始化成功",
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "身份证模块初始化失败",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        return ret;
+
+    }
+
+
+    private void openDevice(Context context)
+    {
+        if (null != idCardReader)
+        {
+            IDCardReaderFactory.destroy(idCardReader);
+            idCardReader = null;
+        }
+        // Define output log level
+        //LogHelper.setLevel(Log.VERBOSE);
+        // Start fingerprint sensor
+        Map idrparams = new HashMap();
+        idrparams.put(ParameterHelper.PARAM_SERIAL_SERIALNAME, serialName);
+        idrparams.put(ParameterHelper.PARAM_SERIAL_BAUDRATE, 115200);
+        idCardReader = IDCardReaderFactory.createIDCardReader(context, TransportType.SERIALPORT, idrparams);
+        if(null!=idCardReader) {
+            try {
+
+                idCardReader.open(0);
+            }catch (IDCardReaderException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void closeDevice()
+    {
+        if (isReadingCard)
+        {
+            StopReadCard();
+            try {
+                idCardReader.close(0);
+            } catch (IDCardReaderException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     public void StartReadCard() {
         if (isReadingCard) {
@@ -71,56 +148,44 @@ public class IDCardSDK {
     }
 
     public void StopReadCard() {
-        if (readCardThread != null && !readCardThread.isInterrupted())
+        if (!readCardThread.isInterrupted())
             readCardThread.interrupt();
     }
 
     private class ReadCardRunnable implements Runnable {
         @Override
         public void run() {
-            HSIDCardInfo icCardInfo;
+            IDCardInfo idCardInfo;
             try {
                 while (true) {
-                    synchronized (hsOtgApi) {
-                        Thread.sleep(4 * 100);
-                        if (hsOtgApi.Authenticate(200, 200) != 1) {
-                            Thread.sleep(1000);
-                        } else {
-                            icCardInfo = new HSIDCardInfo();
-                            ReadCardEvent cardEvent = new ReadCardEvent();
-                            if (hsOtgApi.ReadCard(icCardInfo, 200, 1300) == 1) {
-                                cardEvent.setCardInfo(icCardInfo);
-                                EventBus.getDefault().post(cardEvent);
-                                throw new InterruptedException();
-                            } else {
-                                Thread.sleep(1000);
-                            }
-                            //SystemClock.sleep(3 * 1000);
-                        }
+                    Thread.sleep(5 * 100);
+                    try {
+                        idCardReader.findCard(0);
+                        idCardReader.selectCard(0);
+                    }catch (IDCardReaderException e)
+                    {
+                        continue;
                     }
+                    int cardType = 0;
+                    try {
+                        cardType = idCardReader.readCardEx(0, 0);
+                    }
+                    catch (IDCardReaderException e)
+                    {
+                        continue;
+                    }
+                    if (cardType == IDCardType.TYPE_CARD_SFZ || cardType == IDCardType.TYPE_CARD_GAT)
+                    {
+                        idCardInfo = idCardReader.getLastIDCardInfo();
+                        ReadCardEvent cardEvent = new ReadCardEvent();
+                        cardEvent.setCardInfo(idCardInfo);
+                        EventBus.getDefault().post(cardEvent);
+                    }
+
                 }
             } catch (InterruptedException e) {
                 isReadingCard = false;
             }
         }
     }
-
-    private Bitmap unZipHeadPic(HSIDCardInfo icCardInfo) {
-        Bitmap bmp = null;
-        int ret = hsOtgApi.Unpack(filepath, icCardInfo.getwltdata());// 照片解码
-        if (ret != 0) {
-            return bmp;
-        }
-
-        try {
-            FileInputStream fis = new FileInputStream(filepath + "/zp.bmp");
-            bmp = BitmapFactory.decodeStream(fis);
-            fis.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return bmp;
-    }
-
 }

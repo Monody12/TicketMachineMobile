@@ -13,7 +13,7 @@ import com.example.ticketmachinemobile.model.SellTicketViewModel
 import com.example.ticketmachinemobile.ticket.SellTicketPayScreen
 import com.example.ticketmachinemobile.util.IDCardSDK
 import com.example.ticketmachinemobile.util.ReadCardEvent
-import com.huashi.otg.sdk.HSIDCardInfo
+import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -36,7 +36,7 @@ class SellTicketPayActivity : ComponentActivity()  {
             }
         }
         idCard = IDCardSDK.getInstance()
-        val initSDK = idCard.initSDK(handler, this)
+        val initSDK = idCard.initSDK(this)
         Toast.makeText(this, "initSDK: $initSDK", Toast.LENGTH_SHORT).show()
         // 注册事件总线
         EventBus.getDefault().register(this)
@@ -55,9 +55,9 @@ class SellTicketPayActivity : ComponentActivity()  {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onReadCardEvent(readCardEvent: ReadCardEvent) {
-        val cardInfo: HSIDCardInfo = readCardEvent.getCardInfo()
+        val cardInfo: IDCardInfo = readCardEvent.getCardInfo()
         if (cardInfo != null) {
-            addPassenger(cardInfo.idCard, cardInfo.peopleName)
+            addPassenger(cardInfo.id, cardInfo.name)
             SellTicketPayViewModel.Companion.addPassengerDialogShow.value = false
             addPassengerDialogOnChange()
         }

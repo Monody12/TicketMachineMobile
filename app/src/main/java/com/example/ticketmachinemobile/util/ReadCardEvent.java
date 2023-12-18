@@ -1,30 +1,25 @@
 package com.example.ticketmachinemobile.util;
 
-import android.graphics.Bitmap;
+import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
 
-import com.huashi.otg.sdk.HSIDCardInfo;
 
 public class ReadCardEvent {
 
-    private HSIDCardInfo cardInfo;
-
+    private IDCardInfo cardInfo;
 
     public ReadCardEvent() {
     }
 
-    public ReadCardEvent(HSIDCardInfo cardInfo) {
+    public ReadCardEvent(IDCardInfo cardInfo) {
         this.cardInfo = cardInfo;
     }
 
-    public ReadCardEvent(HSIDCardInfo cardInfo, Bitmap bitmap) {
-        this.cardInfo = cardInfo;
-    }
 
-    public HSIDCardInfo getCardInfo() {
+    public IDCardInfo getCardInfo() {
         return cardInfo;
     }
 
-    public void setCardInfo(HSIDCardInfo cardInfo) {
+    public void setCardInfo(IDCardInfo cardInfo) {
         this.cardInfo = cardInfo;
     }
 }
