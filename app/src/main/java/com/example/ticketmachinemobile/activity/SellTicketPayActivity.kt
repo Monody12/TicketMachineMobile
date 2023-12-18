@@ -41,6 +41,9 @@ class SellTicketPayActivity : ComponentActivity()  {
         // 注册事件总线
         EventBus.getDefault().register(this)
 
+        // 初始化ViewModel中的数据
+        viewModel.init()
+
     }
 
     override fun onDestroy() {
@@ -82,6 +85,7 @@ class SellTicketPayActivity : ComponentActivity()  {
         } else {
             Toast.makeText(this, "请取出身份证", Toast.LENGTH_SHORT).show()
             idCard.StopReadCard()
+            SellTicketPayViewModel.isManualInput.value = false
         }
     }
 
