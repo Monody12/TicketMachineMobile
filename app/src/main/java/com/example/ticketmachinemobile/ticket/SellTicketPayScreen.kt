@@ -412,3 +412,15 @@ fun IdTypeSelect() {
         }
     }
 }
+
+@Preview
+@Composable
+fun SellTicketPayScreenPreview(){
+    SellTicketPayScreen(
+        onAddPassengerDialogShowChange = { addPassengerDialogOnChange() }
+    )
+}
+
+fun addPassengerDialogOnChange() {
+    TODO("Not yet implemented")
+}
