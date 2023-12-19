@@ -1,6 +1,9 @@
 package com.example.ticketmachinemobile.scan
 
+import android.app.Activity
 import android.content.Intent
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +28,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.ticketmachinemobile.activity.ScanActivity
+import com.example.ticketmachinemobile.activity.MainActivity.Companion.BITMAP_CODE
+import com.example.ticketmachinemobile.activity.MainActivity.Companion.DECODE_MODE
+import com.example.ticketmachinemobile.activity.ScanActivity.Companion.SCAN_RESULT
 import com.example.ticketmachinemobile.constant.TicketConstant
+import com.huawei.hms.ml.scan.HmsScan
 
 
 /**
@@ -97,17 +105,32 @@ fun ScanQrCodeScreen(mode :String = TicketConstant.CHECK_TICKET) {
 
 
         // 开始扫码按钮
+//        val scanLauncher = rememberLauncherForActivityResult(
+//            contract = ActivityResultContracts.StartActivityForResult(),
+//        ){
+//            // 处理扫码结果
+//            scannedCode = it.data?.getStringExtra(ScanActivity.SCAN_RESULT) ?: ""
+//        }
+        // 开始扫码按钮
         val scanLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult(),
-        ){
-            // 处理扫码结果
-            scannedCode = it.data?.getStringExtra("SCAN_RESULT") ?: ""
+        ) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // 处理扫码结果
+                val results = result.data?.getParcelableArrayExtra(SCAN_RESULT)
+                scannedCode = (results?.get(0) as HmsScan).originalValue
+                // 处理扫码结果
+                if (scannedCode != null && scannedCode.isNotEmpty()) {
+                    Toast.makeText(context,"扫码结果：${scannedCode}",Toast.LENGTH_SHORT).show()
+                }
+            }
         }
         Button(
             onClick = {
                 // 启动一个扫码界面
-//                val intent = Intent(context, ScanActivity::class.java)
-//                scanLauncher.launch(intent)
+                val intent = Intent(context, ScanActivity::class.java)
+                intent.putExtra(DECODE_MODE, BITMAP_CODE)
+                scanLauncher.launch(intent)
             },
             modifier = Modifier
                 .fillMaxWidth()

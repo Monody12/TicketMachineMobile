@@ -10,38 +10,18 @@
     <color name="dark_gray">#3C3F41</color>
 
 
-    <!--import-->
-    <color name="colorPrimaryDark">#f57257</color>
-    <color name="colorPrimary">#f46444</color>
-    <color name="navigationBarColor">#f46444</color>
-    <color name="colorPrimaryDarkTrans">#CCf57257</color>
+    <!-- Huawei -->
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
 
-    <style name="MatchWrapTv" parent="MatchWrap">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:gravity">center</item>
-        <item name="android:background">@drawable/selector_btn_orange</item>
-        <item name="android:layout_margin">10dp</item>
-        <item name="android:onClick">onClick</item>
-        <item name="android:padding">8dp</item>
-    </style>
-
-    <style name="AutoWrapTv" parent="AutoWrap">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:gravity">center</item>
-        <item name="android:background">@drawable/selector_btn_orange</item>
-        <item name="android:layout_margin">4dp</item>
-        <item name="android:onClick">onClick</item>
-        <item name="android:padding">4dp</item>
-    </style>
-
-    <style name="WrapWrapTv" parent="WrapWrap">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:gravity">center</item>
-        <item name="android:background">@drawable/selector_btn_orange</item>
-        <item name="android:onClick">onClick</item>
-        <item name="android:padding">4dp</item>
-    </style>
+    <color name="viewfinder_mask">#60000000</color>
+    <color name="viewfinder_corner">#FF1FB3E2</color>
+    <color name="viewfinder_laser">#FF1FB3E2</color>
+    <color name="viewfinder_result_point_color">#C0FFBD21</color>
+    <color name="viewfinder_text_color">#FFC0C0C0</color>
+    <color name="viewfinder_text_color2">#30ff54</color>
+    <color name="viewfinder_text_color3">#ffffff</color>
+    <color name="viewfinder_text_color4">#C0C0C0</color>
+    <color name="black_overlay">#66000000</color>
 </resources>

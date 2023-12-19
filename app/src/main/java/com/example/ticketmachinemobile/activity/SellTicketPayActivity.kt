@@ -22,6 +22,8 @@ class SellTicketPayActivity : ComponentActivity()  {
 
     private lateinit var idCard: IDCardSDK
 
+    private var readCard : Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val viewModel = SellTicketPayViewModel.Companion
@@ -36,11 +38,16 @@ class SellTicketPayActivity : ComponentActivity()  {
             }
         }
         idCard = IDCardSDK.getInstance()
-        val initSDK = idCard.initSDK(this)
-        Toast.makeText(this, "initSDK: $initSDK", Toast.LENGTH_SHORT).show()
-        // 注册事件总线
-        EventBus.getDefault().register(this)
-
+        try {
+            val initSDK = idCard.initSDK(this)
+            Toast.makeText(this, "initSDK: $initSDK", Toast.LENGTH_SHORT).show()
+            readCard = true
+            // 注册事件总线
+            EventBus.getDefault().register(this)
+        }catch (e : Error){
+            e.printStackTrace()
+            Toast.makeText(this, "初始化SDK失败", Toast.LENGTH_SHORT).show()
+        }
         // 初始化ViewModel中的数据
         viewModel.init()
 
@@ -48,9 +55,11 @@ class SellTicketPayActivity : ComponentActivity()  {
 
     override fun onDestroy() {
         super.onDestroy()
-        idCard.unInitSDK()
-        // 注销事件总线
-        EventBus.getDefault().unregister(this)
+        if (readCard){
+            idCard.unInitSDK()
+            // 注销事件总线
+            EventBus.getDefault().unregister(this)
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -77,6 +86,10 @@ class SellTicketPayActivity : ComponentActivity()  {
     }
 
     private fun addPassengerDialogOnChange(){
+        if (readCard.not()){
+            Toast.makeText(this, "当前设备无法使用身份证读卡器", Toast.LENGTH_SHORT).show()
+            return
+        }
         val stateValue = SellTicketPayViewModel.addPassengerDialogShow.value
         println(stateValue)
         if (stateValue) {

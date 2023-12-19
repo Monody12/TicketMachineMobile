@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.format.DateFormat
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
@@ -19,6 +20,7 @@ import com.example.ticketmachinemobile.CheckTicket
 import com.example.ticketmachinemobile.Overview
 import com.example.ticketmachinemobile.ScanQrCode
 import com.example.ticketmachinemobile.SellTicket
+import com.example.ticketmachinemobile.activity.ScanActivity.Companion.SCAN_RESULT
 import com.example.ticketmachinemobile.components.TicketMobileTabRow
 import com.example.ticketmachinemobile.overview.OverviewScreen
 import com.example.ticketmachinemobile.overview.navigateSingleTopTo
@@ -27,9 +29,27 @@ import com.example.ticketmachinemobile.ticket.CheckTicketScreen
 import com.example.ticketmachinemobile.ticket.SellTicketScreen
 import com.example.ticketmachinemobile.ticketMobileTabRowScreens
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
+import com.example.ticketmachinemobile.util.IDCardSDK
 
 
 class MainActivity : ComponentActivity() {
+
+    companion object {
+        const val CAMERA_REQ_CODE = 111
+        const val DEFINED_CODE = 222
+        const val BITMAP_CODE = 333
+        const val MULTIPROCESSOR_SYN_CODE = 444
+        const val MULTIPROCESSOR_ASYN_CODE = 555
+        const val GENERATE_CODE = 666
+        const val DECODE = 1
+        const val GENERATE = 2
+        const val REQUEST_CODE_SCAN_ONE = 0X01
+        const val REQUEST_CODE_DEFINE = 0X0111
+        const val REQUEST_CODE_SCAN_MULTI = 0X011
+        const val DECODE_MODE = "decode_mode"
+        const val RESULT = "SCAN_RESULT"
+    }
+
     private val REQUEST_CODE_SCAN = 0x0000
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +57,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             TicketMobileApp()
         }
+//        val idCard = IDCardSDK.getInstance()
+//        val initSDK = idCard.initSDK(this)
+//        Toast.makeText(this, "initSDK: $initSDK", Toast.LENGTH_SHORT).show()
     }
 
 
@@ -44,8 +67,10 @@ class MainActivity : ComponentActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == REQUEST_CODE_SCAN && resultCode == Activity.RESULT_OK) {
-            val scanResult = data?.getStringExtra("SCAN_RESULT")
+            val scanResult = data?.getStringExtra(SCAN_RESULT)
             // 处理扫码结果
+//            Toast.makeText(this, "扫码结果：${scanResult}", Toast.LENGTH_SHORT).show()
+
         }
     }
 
