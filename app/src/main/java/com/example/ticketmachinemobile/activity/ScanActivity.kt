@@ -3,25 +3,34 @@ package com.example.ticketmachinemobile.activity
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Point
+import android.hardware.camera2.CameraAccessException
+import android.hardware.camera2.CameraManager
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
-import android.view.*
+import android.view.SurfaceHolder
+import android.view.SurfaceView
+import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.Animation.AnimationListener
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.example.ticketmachinemobile.R
 import com.example.ticketmachinemobile.activity.MainActivity.Companion.BITMAP_CODE
 import com.example.ticketmachinemobile.activity.MainActivity.Companion.DECODE_MODE
 import com.example.ticketmachinemobile.activity.MainActivity.Companion.MULTIPROCESSOR_ASYN_CODE
 import com.example.ticketmachinemobile.activity.MainActivity.Companion.MULTIPROCESSOR_SYN_CODE
-
 import com.example.ticketmachinemobile.scan.CameraOperation
 import com.example.ticketmachinemobile.scan.CommonHandler
 import com.example.ticketmachinemobile.scan.draw.ScanResultView
@@ -32,7 +41,7 @@ import com.huawei.hms.ml.scan.HmsScanAnalyzer
 import com.huawei.hms.ml.scan.HmsScanAnalyzerOptions
 import com.huawei.hms.mlsdk.common.MLFrame
 import java.io.IOException
-import java.util.*
+import java.util.Objects
 
 
 class ScanActivity :Activity(){
@@ -49,6 +58,11 @@ class ScanActivity :Activity(){
 
     var isShow = false
     var scanResultView: ScanResultView? = null
+
+    /**
+     * 相机闪光灯状态
+     */
+    private var isFlashOn : Boolean = false
 
     companion object{
         const val TAG = "commonActivity"
@@ -92,6 +106,7 @@ class ScanActivity :Activity(){
         setPictureScanOperation()
 
         scanResultView = findViewById(R.id.scan_result_view)
+
     }
 
 
@@ -229,7 +244,9 @@ class ScanActivity :Activity(){
                 setResult(RESULT_OK, intent)
                 finish()
             }
-        }.addOnFailureListener { e -> Log.w(TAG, e) }
+        }.addOnFailureListener {
+            e -> Log.w(TAG, e)
+        }
     }
 
     private fun decodeMultiSyn(bitmap: Bitmap) {
@@ -260,6 +277,28 @@ class ScanActivity :Activity(){
         override fun surfaceDestroyed(holder: SurfaceHolder) {
             isShow = false
         }
+    }
+
+    /**
+     * 闪光灯控制
+     */
+    fun toggleFlash(view: View){
+        Toast.makeText(this,"点击手电筒按钮",Toast.LENGTH_SHORT).show()
+        if (isFlashOn){
+            turnOffFlash()
+        }else{
+            turnOnFlash()
+        }
+    }
+
+    private fun turnOnFlash() {
+        cameraOperation?.turnOnFlash()
+        isFlashOn = true
+    }
+
+    private fun turnOffFlash() {
+        cameraOperation?.turnOffFlash()
+        isFlashOn = false
     }
 
 }

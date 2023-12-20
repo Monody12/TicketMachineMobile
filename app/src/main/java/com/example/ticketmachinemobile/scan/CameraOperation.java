@@ -36,6 +36,11 @@ public class CameraOperation {
     private double defaultZoom = 1.0;
 
     /**
+     * 闪光灯
+     */
+    private boolean isFlashOn;
+
+    /**
      * Open up the camera.
      */
     public synchronized void open(SurfaceHolder holder) throws IOException {
@@ -118,5 +123,24 @@ public class CameraOperation {
                 handler = null;
             }
         }
+    }
+
+    /**
+     * 闪光灯控制
+     */
+    public void turnOnFlash() {
+        Camera.Parameters params = camera.getParameters();
+        params.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+        camera.setParameters(params);
+        camera.startPreview();
+        isFlashOn = true;
+    }
+
+    public void turnOffFlash() {
+        Camera.Parameters params = camera.getParameters();
+        params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+        camera.setParameters(params);
+//        camera.stopPreview();
+        isFlashOn = false;
     }
 }
