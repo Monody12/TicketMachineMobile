@@ -1,4 +1,5 @@
 import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
+import org.jetbrains.kotlin.ir.backend.js.compile
 
 plugins {
     id("com.android.application")
@@ -106,6 +107,12 @@ dependencies {
     api("org.greenrobot:eventbus:3.2.0")
     api(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     api(files("libs/qspdasdk.jar"))
+    // 网络
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    compileOnly("com.squareup.retrofit2:converter-gson:2.0.2")
+    // 依赖注入
+    implementation("com.google.dagger:hilt-android:2.46.1")
+    kapt("com.google.dagger:hilt-android:2.46.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
