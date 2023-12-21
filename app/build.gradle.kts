@@ -109,7 +109,9 @@ dependencies {
     api(files("libs/qspdasdk.jar"))
     // 网络
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    compileOnly("com.squareup.retrofit2:converter-gson:2.0.2")
+//    compileOnly("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.google.code.gson:gson:2.9.1")
     // 依赖注入
     implementation("com.google.dagger:hilt-android:2.46.1")
     kapt("com.google.dagger:hilt-android:2.46.1")

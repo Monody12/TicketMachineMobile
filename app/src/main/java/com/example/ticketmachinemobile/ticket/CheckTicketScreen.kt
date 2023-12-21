@@ -1,5 +1,6 @@
 package com.example.ticketmachinemobile.ticket
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,8 +26,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.ticketmachinemobile.components.TicketMobileSelection
+import com.example.ticketmachinemobile.network.RetrofitService
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
 
 @Composable
@@ -41,6 +44,7 @@ fun CheckTicketScreen() {
 
 @Composable
 fun FilterBox() {
+    val context = LocalContext.current
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -51,7 +55,10 @@ fun FilterBox() {
                 text = "检票",
                 style = MaterialTheme.typography.h6,
             )
-            IconButton(onClick = { }) {
+            IconButton(onClick = {
+//                val resp = RetrofitService.getInfo()
+//                Toast.makeText(context, resp.toString(), Toast.LENGTH_LONG).show()
+            }) {
                 Icon(
                     imageVector = Icons.Default.Refresh,
                     contentDescription = "刷新",

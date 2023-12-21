@@ -6,7 +6,7 @@ import retrofit2.http.GET
 
 interface ApiService {
 
-    @GET("pasteboard/")
+    @GET("routes/")
     fun getCall():Call<BaseResp<Any>>
 
 }

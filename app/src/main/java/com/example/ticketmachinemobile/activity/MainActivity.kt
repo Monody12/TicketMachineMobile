@@ -30,8 +30,10 @@ import com.example.ticketmachinemobile.ticket.SellTicketScreen
 import com.example.ticketmachinemobile.ticketMobileTabRowScreens
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
 import com.example.ticketmachinemobile.util.IDCardSDK
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     companion object {
