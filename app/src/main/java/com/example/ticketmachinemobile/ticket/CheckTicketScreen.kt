@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.ticketmachinemobile.components.TicketMobileSelection
 import com.example.ticketmachinemobile.network.RetrofitService
+import com.example.ticketmachinemobile.network.VolleyService
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
 
 @Composable
@@ -56,8 +57,9 @@ fun FilterBox() {
                 style = MaterialTheme.typography.h6,
             )
             IconButton(onClick = {
-//                val resp = RetrofitService.getInfo()
-//                Toast.makeText(context, resp.toString(), Toast.LENGTH_LONG).show()
+                val volleyService = VolleyService(context)
+                val simpleData = volleyService.getSimpleData()
+                Toast.makeText(context,simpleData.toString(),Toast.LENGTH_LONG).show()
             }) {
                 Icon(
                     imageVector = Icons.Default.Refresh,

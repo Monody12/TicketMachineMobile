@@ -169,7 +169,7 @@ fun PassengerList(onAddPassengerDialogShowChange: () -> Unit) {
 
             Button(onClick = {
                 // 打开添加乘客对话框
-                SellTicketPayViewModel.Companion.addPassengerDialogShow.value = true
+                SellTicketPayViewModel.addPassengerDialogShow.value = true
                 onAddPassengerDialogShowChange()
             }, modifier = Modifier.fillMaxWidth()) {
                 Text(text = "添加乘客")
