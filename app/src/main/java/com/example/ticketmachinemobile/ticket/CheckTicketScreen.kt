@@ -1,5 +1,6 @@
 package com.example.ticketmachinemobile.ticket
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,7 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.ticketmachinemobile.components.TicketMobileSelection
-import com.example.ticketmachinemobile.network.RetrofitService
+import com.example.ticketmachinemobile.network.ApiResponse
 import com.example.ticketmachinemobile.network.VolleyService
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
 
@@ -57,9 +58,10 @@ fun FilterBox() {
                 style = MaterialTheme.typography.h6,
             )
             IconButton(onClick = {
-                val volleyService = VolleyService(context)
-                val simpleData = volleyService.getSimpleData()
-                Toast.makeText(context,simpleData.toString(),Toast.LENGTH_LONG).show()
+//                val volleyService = VolleyService(context)
+//                volleyService.getSimpleDataCallback{
+//                    response, ctx -> checkTicketListCallBack(response,ctx)
+//                }
             }) {
                 Icon(
                     imageVector = Icons.Default.Refresh,
@@ -149,3 +151,10 @@ fun TabbedLayout() {
     }
 }
 
+private fun checkTicketListCallBack(response: ApiResponse<*>,context: Context){
+    if (response.success){
+        Toast.makeText(context,"请求成功：${response.data}",Toast.LENGTH_LONG).show()
+    }else{
+        Toast.makeText(context,"请求失败",Toast.LENGTH_LONG).show()
+    }
+}

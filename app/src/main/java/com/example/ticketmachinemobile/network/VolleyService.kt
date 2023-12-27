@@ -8,28 +8,35 @@ import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 
-class VolleyService(context: Context) {
-    val TAG = "VolleyService: $context"
+class VolleyService(serviceContext: Context) {
+    val TAG = "VolleyService: $serviceContext"
+    val context = serviceContext
 
     val baseUrl = "http://192.168.100.105:8080/"
-    val queue = Volley.newRequestQueue(context)
-    fun getSimpleData(): ApiResponse<String> {
-        val url = baseUrl + "routes"
-        var resp: String? = null
+    val queue = Volley.newRequestQueue(serviceContext)
+
+    fun getSimpleDataCallback(apiUrl: String, callback: (ApiResponse<*>, Context) -> Unit) {
+        val url = baseUrl + apiUrl
         var success = true
+
         val stringRequest = StringRequest(Request.Method.GET, url,
             Response.Listener {
-                resp = it.toString()
-                Log.d(TAG,resp.toString())
+                val resp = it.toString()
+                Log.d(TAG, resp)
+                val response = ApiResponse(code = 200, success = success, data = resp)
+                callback(response, this.context)
             },
             Response.ErrorListener {
-                resp = it.toString()
+                val resp = it.toString()
                 success = false
-                Log.d(TAG,resp.toString())
+                Log.d(TAG, resp)
+                val response = ApiResponse(code = 500, success = success, data = resp)
+                callback(response, this.context)
             }
         )
+
         queue.add(stringRequest)
-        return ApiResponse(code = 200, success = success, data = resp)
     }
+
 
 }
