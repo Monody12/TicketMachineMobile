@@ -3,14 +3,14 @@ package com.example.ticketmachinemobile.model
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.ticketmachinemobile.data.ShiftRepository
+import com.example.ticketmachinemobile.network.resp.ShiftInfo
 
 class SellTicketViewModel : ViewModel() {
 
     /**
      * 班次列表
      */
-    var shiftList = ShiftRepository.getSimpleShiftList()
+    var shiftList : MutableLiveData<MutableList<ShiftInfo>> = MutableLiveData()
 
     /**
      * 售票选中班次id

@@ -12,6 +12,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -22,6 +23,7 @@ import com.example.ticketmachinemobile.ScanQrCode
 import com.example.ticketmachinemobile.SellTicket
 import com.example.ticketmachinemobile.activity.ScanActivity.Companion.SCAN_RESULT
 import com.example.ticketmachinemobile.components.TicketMobileTabRow
+import com.example.ticketmachinemobile.model.CheckTicketViewModel
 import com.example.ticketmachinemobile.overview.OverviewScreen
 import com.example.ticketmachinemobile.overview.navigateSingleTopTo
 import com.example.ticketmachinemobile.scan.ScanQrCodeScreen
@@ -54,6 +56,8 @@ class MainActivity : ComponentActivity() {
 
     private val REQUEST_CODE_SCAN = 0x0000
 
+    private lateinit var viewModel: CheckTicketViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -62,6 +66,12 @@ class MainActivity : ComponentActivity() {
 //        val idCard = IDCardSDK.getInstance()
 //        val initSDK = idCard.initSDK(this)
 //        Toast.makeText(this, "initSDK: $initSDK", Toast.LENGTH_SHORT).show()
+        // 初始化检票数据
+        viewModel = ViewModelProvider(this)[CheckTicketViewModel::class.java]
+        val shiftListData = viewModel.shiftInfoLiveData
+        if (shiftListData.value.isNullOrEmpty()) {
+            viewModel.getCheckTicket("2023-12-27", 1)
+        }
     }
 
 

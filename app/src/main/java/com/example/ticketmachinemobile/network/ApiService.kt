@@ -1,6 +1,6 @@
 package com.example.ticketmachinemobile.network
 
-import com.example.ticketmachinemobile.ShiftInfo
+import com.example.ticketmachinemobile.network.resp.ShiftInfo
 import com.example.ticketmachinemobile.data.response.BaseResp
 import retrofit2.Call
 import retrofit2.http.GET

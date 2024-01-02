@@ -56,7 +56,9 @@ fun SellTicketScreen() {
                 ShiftList(
                     showDialog = viewModel.stationDialogShow,
                     updateShiftClickEvent = viewModel::updateShiftClickEvent,
-                    { SellTicketText(22, null) })
+                    shiftInfoList = viewModel.shiftList.value ?: emptyList(),
+                    { SellTicketText(22, null) }
+                )
                 StationDialogSelection(
                     showDialog = viewModel.stationDialogShow
                 )

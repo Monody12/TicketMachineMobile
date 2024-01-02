@@ -1,6 +1,7 @@
 package com.example.ticketmachinemobile.ticket
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -29,16 +31,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ticketmachinemobile.components.TicketMobileSelection
+import com.example.ticketmachinemobile.model.CheckTicketViewModel
 import com.example.ticketmachinemobile.network.ApiResponse
+import com.example.ticketmachinemobile.network.resp.ShiftInfo
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
 
 @Composable
 fun CheckTicketScreen() {
+    val viewModel: CheckTicketViewModel = viewModel()
+    val shiftListData by viewModel.shiftInfoLiveData.observeAsState()
+    if (shiftListData.isNullOrEmpty()){
+        viewModel.getCheckTicket("2023-12-27",1)
+    }
+    Log.i("CheckTicketScreen", "shiftListData: ${shiftListData.toString()}")
     TicketMachineMobileTheme {
         Column {
             FilterBox()
-            ShiftList(null,null,{ CheckButtonRow() })
+            shiftListData?.let {
+                ShiftList(
+                    null,
+                    null,
+                    shiftInfoList = it,
+                    { CheckButtonRow() },
+                )
+            }
         }
     }
 }
@@ -46,6 +65,7 @@ fun CheckTicketScreen() {
 @Composable
 fun FilterBox() {
     val context = LocalContext.current
+    val viewModel : CheckTicketViewModel = viewModel()
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -57,10 +77,7 @@ fun FilterBox() {
                 style = MaterialTheme.typography.h6,
             )
             IconButton(onClick = {
-//                val volleyService = VolleyService(context)
-//                volleyService.getSimpleDataCallback{
-//                    response, ctx -> checkTicketListCallBack(response,ctx)
-//                }
+                viewModel.getCheckTicket("2023-12-27",1)
             }) {
                 Icon(
                     imageVector = Icons.Default.Refresh,
@@ -150,10 +167,10 @@ fun TabbedLayout() {
     }
 }
 
-private fun checkTicketListCallBack(response: ApiResponse<*>,context: Context){
-    if (response.code == 200){
-        Toast.makeText(context,"请求成功：${response.data}",Toast.LENGTH_LONG).show()
-    }else{
-        Toast.makeText(context,"请求失败",Toast.LENGTH_LONG).show()
+private fun checkTicketListCallBack(response: ApiResponse<*>, context: Context) {
+    if (response.code == 200) {
+        Toast.makeText(context, "请求成功：${response.data}", Toast.LENGTH_LONG).show()
+    } else {
+        Toast.makeText(context, "请求失败", Toast.LENGTH_LONG).show()
     }
 }

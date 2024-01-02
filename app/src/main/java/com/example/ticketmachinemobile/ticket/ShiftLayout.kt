@@ -1,7 +1,6 @@
 package com.example.ticketmachinemobile.ticket
 
 import android.content.Intent
-import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,18 +25,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ticketmachinemobile.activity.SellTicketPayActivity
-import com.example.ticketmachinemobile.data.ShiftData
-import com.example.ticketmachinemobile.data.ShiftRepository
 import com.example.ticketmachinemobile.model.SellTicketViewModel
+import com.example.ticketmachinemobile.network.resp.ShiftInfo
+import com.example.ticketmachinemobile.network.resp.Station
+import com.example.ticketmachinemobile.util.DateUtil
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
-private val TAG = "ShiftLayout"
+private const val TAG = "ShiftLayout"
 
 /**
  * 班次显示布局
  */
 @Composable
 fun ShiftLayout(
-    shiftData: ShiftData,
+    shiftInfo: ShiftInfo,
     clickState: MutableState<Boolean>?,
     updateShiftClickEvent: ((Int?, String?) -> Unit)?,
     vararg content: @Composable () -> Unit
@@ -62,13 +64,13 @@ fun ShiftLayout(
         ) {
             // 线路名称
             Text(
-                text = shiftData.lineData?.lineName ?: "",
+                text = shiftInfo.routeName,
                 style = textWhiteAndCenter,
                 modifier = Modifier.weight(1f)
             )
             // 发车时间
             Text(
-                text = shiftData.departureTime ?: "",
+                text = DateUtil.formatTimeHHMM(shiftInfo.startTime),
                 style = textWhiteAndCenter,
                 modifier = Modifier.weight(1f)
             )
@@ -79,14 +81,14 @@ fun ShiftLayout(
             Modifier.clickable {
                 clickState.value = true
                 if (updateShiftClickEvent != null) {
-                    updateShiftClickEvent(shiftData.id, shiftData.lineData?.lineName)
+                    updateShiftClickEvent(shiftInfo.id, shiftInfo.routeName)
                 }
             }
         } else {
             Modifier
         }
         // 站点信息
-        shiftData.lineData?.stationList?.forEach {
+        shiftInfo.stationList.forEachIndexed { index, value ->
             Row(
                 modifier = clickableModifier
                     .fillMaxWidth()
@@ -96,24 +98,24 @@ fun ShiftLayout(
             ) {
                 // 站点名称
                 Text(
-                    text = it.stationName,
+                    text = value.stationName,
                     style = textWhiteAndCenter,
                 )
                 // 上车人数
-                if (it.getOnCount > 0)
+                if (index == 0)
                     Text(
-                        text = it.getOnCount.toString() + "上",
+                        text = value.personCount.toString() + "上",
                         style = textWhiteAndCenter,
                     )
                 // 下车人数
-                if (it.getOffCount > 0)
+                else
                     Text(
-                        text = it.getOffCount.toString() + "下",
+                        text = value.personCount.toString() + "下",
                         style = textWhiteAndCenter,
                     )
                 // 到站时间
                 Text(
-                    text = it.arriveTime,
+                    text = DateUtil.formatTimeHHMM(value.arrivalTime),
                     style = textWhiteAndCenter,
                 )
 
@@ -123,13 +125,13 @@ fun ShiftLayout(
         Row {
             // 乘客数量
             Text(
-                text = "共${shiftData.passengerCount}乘客 ${shiftData.childCount}携童",
+                text = "共${shiftInfo.soldSeatNum}乘客 ${0}携童",
                 style = textWhiteAndCenter,
                 modifier = Modifier.weight(1f)
             )
             // 已检票数量
             Text(
-                text = "已检票${shiftData.checkedCount}人",
+                text = "已检票${shiftInfo.checkTicket}人",
                 style = textWhiteAndCenter,
                 modifier = Modifier.weight(1f)
             )
@@ -146,19 +148,20 @@ fun ShiftLayout(
  */
 @Composable
 fun ShiftList(
-    showDialog: MutableState<Boolean> ?,
-    updateShiftClickEvent: ((Int?, String?) -> Unit) ?,
+    showDialog: MutableState<Boolean>?,
+    updateShiftClickEvent: ((Int?, String?) -> Unit)?,
+    shiftInfoList: List<ShiftInfo>,
     vararg content: @Composable () -> Unit
 ) {
-    val shiftDataList = ShiftRepository.getSimpleShiftList()
+//    val shiftDataList = ShiftRepository.getSimpleShiftList()
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 2.dp)
             .zIndex(0f) // 设置LazyColumn的zIndex
     ) {
-        items(shiftDataList.size) { index ->
-            ShiftLayout(shiftDataList[index], showDialog, updateShiftClickEvent,*content)
+        items(shiftInfoList.size) { index ->
+            ShiftLayout(shiftInfoList[index], showDialog, updateShiftClickEvent, *content)
         }
     }
 }
@@ -213,10 +216,11 @@ fun StationDialogSelection(
     showDialog: MutableState<Boolean>
 ) {
     val context = LocalContext.current
-    val viewModel : SellTicketViewModel = viewModel()
+    val viewModel: SellTicketViewModel = viewModel()
     // 站点列表。从viewModel中获取用户点击了哪个班次，然后获取班次对应的线路，然后获取该线路的站点列表
-    val stationList = viewModel.shiftList.find { it.id == viewModel.shiftId.value }?.lineData?.stationList
-        ?: listOf()
+    val stationList: List<Station> =
+        viewModel.shiftList.value?.find { it.id == viewModel.shiftId.value }?.stationList
+            ?: emptyList()
     if (showDialog.value)
         AlertDialog(
             onDismissRequest = {
