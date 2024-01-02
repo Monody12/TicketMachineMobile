@@ -7,6 +7,8 @@ import android.os.Message
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ticketmachinemobile.data.Passenger
 import com.example.ticketmachinemobile.model.SellTicketPayViewModel
 import com.example.ticketmachinemobile.model.SellTicketViewModel
@@ -24,9 +26,11 @@ class SellTicketPayActivity : ComponentActivity()  {
 
     private var readCard : Boolean = false
 
+    private lateinit var viewModel: SellTicketPayViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val viewModel = SellTicketPayViewModel.Companion
+        viewModel = ViewModelProvider(this)[SellTicketPayViewModel::class.java]
         setContent {
             SellTicketPayScreen(
                 onAddPassengerDialogShowChange = { addPassengerDialogOnChange() }
@@ -67,7 +71,7 @@ class SellTicketPayActivity : ComponentActivity()  {
         val cardInfo: IDCardInfo = readCardEvent.getCardInfo()
         if (cardInfo != null) {
             addPassenger(cardInfo.id, cardInfo.name)
-            SellTicketPayViewModel.Companion.addPassengerDialogShow.value = false
+            viewModel.addPassengerDialogShow.value = false
             addPassengerDialogOnChange()
         }
     }
@@ -78,7 +82,7 @@ class SellTicketPayActivity : ComponentActivity()  {
         passenger.idNumber = idCard
         passenger.name = peopleName
         try {
-            SellTicketPayViewModel.addPassenger(passenger)
+            viewModel.addPassenger(passenger)
             Toast.makeText(this, "添加成功：${passenger.toString()}", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
@@ -90,7 +94,7 @@ class SellTicketPayActivity : ComponentActivity()  {
             Toast.makeText(this, "当前设备无法使用身份证读卡器", Toast.LENGTH_SHORT).show()
             return
         }
-        val stateValue = SellTicketPayViewModel.addPassengerDialogShow.value
+        val stateValue = viewModel.addPassengerDialogShow.value
         println(stateValue)
         if (stateValue) {
             Toast.makeText(this, "请放入身份证", Toast.LENGTH_SHORT).show()
@@ -98,7 +102,7 @@ class SellTicketPayActivity : ComponentActivity()  {
         } else {
             Toast.makeText(this, "请取出身份证", Toast.LENGTH_SHORT).show()
             idCard.StopReadCard()
-            SellTicketPayViewModel.isManualInput.value = false
+            viewModel.isManualInput.value = false
         }
     }
 

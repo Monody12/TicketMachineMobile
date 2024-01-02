@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ticketmachinemobile.activity.SellTicketPayActivity
 import com.example.ticketmachinemobile.data.ShiftData
 import com.example.ticketmachinemobile.data.ShiftRepository
@@ -146,7 +147,7 @@ fun ShiftLayout(
 @Composable
 fun ShiftList(
     showDialog: MutableState<Boolean> ?,
-    updateShiftClickEvent: ((Int?, String?) -> Unit)?,
+    updateShiftClickEvent: ((Int?, String?) -> Unit) ?,
     vararg content: @Composable () -> Unit
 ) {
     val shiftDataList = ShiftRepository.getSimpleShiftList()
@@ -209,12 +210,10 @@ fun CheckButtonRow(modifier: Modifier = Modifier) {
  */
 @Composable
 fun StationDialogSelection(
-    showDialog: MutableState<Boolean>,
-//    stationList: List<Station> = LineDataRepository.getSimpleLine().stationList,
-
-    viewModel: SellTicketViewModel.Companion
+    showDialog: MutableState<Boolean>
 ) {
     val context = LocalContext.current
+    val viewModel : SellTicketViewModel = viewModel()
     // 站点列表。从viewModel中获取用户点击了哪个班次，然后获取班次对应的线路，然后获取该线路的站点列表
     val stationList = viewModel.shiftList.find { it.id == viewModel.shiftId.value }?.lineData?.stationList
         ?: listOf()

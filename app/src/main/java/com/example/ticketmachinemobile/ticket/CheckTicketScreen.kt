@@ -31,7 +31,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.ticketmachinemobile.components.TicketMobileSelection
 import com.example.ticketmachinemobile.network.ApiResponse
-import com.example.ticketmachinemobile.network.VolleyService
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
 
 @Composable
@@ -152,7 +151,7 @@ fun TabbedLayout() {
 }
 
 private fun checkTicketListCallBack(response: ApiResponse<*>,context: Context){
-    if (response.success){
+    if (response.code == 200){
         Toast.makeText(context,"请求成功：${response.data}",Toast.LENGTH_LONG).show()
     }else{
         Toast.makeText(context,"请求失败",Toast.LENGTH_LONG).show()

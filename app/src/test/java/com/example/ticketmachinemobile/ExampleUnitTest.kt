@@ -1,9 +1,7 @@
 package com.example.ticketmachinemobile
 
-import android.util.Log
 import com.example.ticketmachinemobile.data.response.BaseResp
 import com.example.ticketmachinemobile.network.ApiService
-import com.example.ticketmachinemobile.network.RetrofitService
 import com.google.gson.Gson
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking

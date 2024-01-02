@@ -40,7 +40,7 @@ import java.util.Locale
 
 @Composable
 fun SellTicketScreen() {
-    val viewModel  = SellTicketViewModel.Companion
+    val viewModel: SellTicketViewModel = viewModel()
     TicketMachineMobileTheme {
         Column(
             modifier = Modifier
@@ -51,14 +51,16 @@ fun SellTicketScreen() {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-            ){
+            ) {
                 // 售票信息
                 ShiftList(
                     showDialog = viewModel.stationDialogShow,
-                    updateShiftClickEvent = SellTicketViewModel::updateShiftClickEvent,
+                    updateShiftClickEvent = viewModel::updateShiftClickEvent,
                     { SellTicketText(22, null) })
-                StationDialogSelection(showDialog = viewModel.stationDialogShow,viewModel = viewModel)
-                StationFilterBottomBar(    
+                StationDialogSelection(
+                    showDialog = viewModel.stationDialogShow
+                )
+                StationFilterBottomBar(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                 )
@@ -179,6 +181,6 @@ fun StationFilterBottomBar(modifier: Modifier = Modifier) {
 
 @Preview
 @Composable
-fun SellTicketScreenPreview(){
+fun SellTicketScreenPreview() {
     SellTicketScreen()
 }

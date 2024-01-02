@@ -1,24 +1,23 @@
 package com.example.ticketmachinemobile.network
 
 class ApiResponse<T> {
+    var data: T? = null
     var code: Int = 0
-    var success: Boolean = false
-    var data : T? = null
+    var msg: String = ""
 
-    constructor(code: Int, success: Boolean) {
+    constructor(data: T?, code: Int, msg: String) {
+        this.data = data
         this.code = code
-        this.success = success
+        this.msg = msg
     }
 
-    constructor(code: Int, success: Boolean, data: T?) {
-        this.code = code
-        this.success = success
-        this.data = data
+    constructor() {
+        this.data = null
+        this.code = 0
+        this.msg = ""
     }
 
     override fun toString(): String {
-        return "ApiResponse(code=$code, success=$success, data=$data)"
+        return "ApiResponse(data=$data, code=$code, msg='$msg')"
     }
-
-
 }
