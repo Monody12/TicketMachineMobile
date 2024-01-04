@@ -1,5 +1,6 @@
-package com.example.ticketmachinemobile.ticket;
+package com.example.ticketmachinemobile.ticket
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,7 +18,9 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -29,10 +32,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.ticketmachinemobile.MyApplication
 import com.example.ticketmachinemobile.components.TicketMobileSelection
 import com.example.ticketmachinemobile.model.SellTicketViewModel
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
+import com.example.ticketmachinemobile.util.DateUtil
+import com.example.ticketmachinemobile.util.DateUtil.getTodayDate
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -41,6 +45,12 @@ import java.util.Locale
 @Composable
 fun SellTicketScreen() {
     val viewModel: SellTicketViewModel = viewModel()
+    val shiftInfoList = viewModel.shiftInfoLiveData.observeAsState()
+    // 界面启动时初始化
+    LaunchedEffect(key1 = Unit, block = {
+        viewModel.getSaleTicket(getTodayDate(), 1)
+    })
+
     TicketMachineMobileTheme {
         Column(
             modifier = Modifier
@@ -56,7 +66,7 @@ fun SellTicketScreen() {
                 ShiftList(
                     showDialog = viewModel.stationDialogShow,
                     updateShiftClickEvent = viewModel::updateShiftClickEvent,
-                    shiftInfoList = viewModel.shiftList.value ?: emptyList(),
+                    shiftInfoList = shiftInfoList.value ?: emptyList(),
                     { SellTicketText(22, null) }
                 )
                 StationDialogSelection(
@@ -74,8 +84,10 @@ fun SellTicketScreen() {
 
 @Composable
 fun DateSelectionScreen() {
-    val dateList = remember { mutableStateOf(listOf<String>()) }
-    val weekList = remember { mutableStateOf(listOf<String>()) }
+    val dateList = remember { mutableListOf<String>() }
+    val weekList = remember { mutableListOf<String>() }
+    // 格式为 yyyy-MM-dd
+    val formatStringList = remember { mutableListOf<String>() }
     val currentDate = LocalDate.now()
     val formatter = DateTimeFormatter.ofPattern("M月d日")
     val locale = Locale("zh", "CN") // 使用中文语言环境
@@ -85,8 +97,9 @@ fun DateSelectionScreen() {
         val formattedDate = date.format(formatter)
         val dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.FULL, locale)
 
-        dateList.value += formattedDate
-        weekList.value += dayOfWeek
+        dateList.add(formattedDate)
+        weekList.add(dayOfWeek)
+        formatStringList.add(DateUtil.formatDate(date))
     }
 
     Row {
@@ -95,8 +108,8 @@ fun DateSelectionScreen() {
             modifier = Modifier
                 .weight(7f)
         ) {
-            items(dateList.value.size) { index ->
-                DateItem(weekList.value[index], dateList.value[index])
+            items(dateList.size) { index ->
+                DateItem(weekList[index], dateList[index], formatStringList[index])
             }
         }
         // 当月及下月日期选择器（一个日期icon按钮）
@@ -116,10 +129,13 @@ fun DateSelectionScreen() {
 }
 
 @Composable
-fun DateItem(week: String, date: String) {
+fun DateItem(week: String, date: String, formatString: String) {
+    val viewModel: SellTicketViewModel = viewModel()
+    val context = LocalContext.current
     Button(
         onClick = {
-            // Handle date item click
+            viewModel.getSaleTicket(formatString, 1)
+            Toast.makeText(context, formatString, Toast.LENGTH_SHORT).show()
         },
         modifier = Modifier
             .padding(3.dp)

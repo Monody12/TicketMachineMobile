@@ -29,8 +29,6 @@ import com.example.ticketmachinemobile.model.SellTicketViewModel
 import com.example.ticketmachinemobile.network.resp.ShiftInfo
 import com.example.ticketmachinemobile.network.resp.Station
 import com.example.ticketmachinemobile.util.DateUtil
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 private const val TAG = "ShiftLayout"
 
@@ -219,7 +217,7 @@ fun StationDialogSelection(
     val viewModel: SellTicketViewModel = viewModel()
     // 站点列表。从viewModel中获取用户点击了哪个班次，然后获取班次对应的线路，然后获取该线路的站点列表
     val stationList: List<Station> =
-        viewModel.shiftList.value?.find { it.id == viewModel.shiftId.value }?.stationList
+        viewModel.shiftInfoLiveData.value?.find { it.id == viewModel.shiftId.value }?.stationList
             ?: emptyList()
     if (showDialog.value)
         AlertDialog(

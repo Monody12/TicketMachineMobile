@@ -11,12 +11,6 @@ import dagger.hilt.android.HiltAndroidApp
 class MyApplication(override val viewModelStore: ViewModelStore) : Application(), ViewModelStoreOwner {
 
     private lateinit var mAppViewModelStore: ViewModelStore
-    private var mFactory: ViewModelProvider.Factory? = null
-
-    val sellTicketViewModel: SellTicketViewModel by lazy {
-        ViewModelProvider.AndroidViewModelFactory.getInstance(this)
-            .create(SellTicketViewModel::class.java)
-    }
 
     override fun onCreate() {
         super.onCreate()

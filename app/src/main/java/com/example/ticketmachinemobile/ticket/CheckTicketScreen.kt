@@ -20,6 +20,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -38,14 +39,16 @@ import com.example.ticketmachinemobile.model.CheckTicketViewModel
 import com.example.ticketmachinemobile.network.ApiResponse
 import com.example.ticketmachinemobile.network.resp.ShiftInfo
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
+import com.example.ticketmachinemobile.util.DateUtil.getTodayDate
 
 @Composable
 fun CheckTicketScreen() {
     val viewModel: CheckTicketViewModel = viewModel()
     val shiftListData by viewModel.shiftInfoLiveData.observeAsState()
-    if (shiftListData.isNullOrEmpty()){
-        viewModel.getCheckTicket("2023-12-27",1)
-    }
+    // 界面启动时初始化
+    LaunchedEffect(key1 = Unit, block = {
+        viewModel.getCheckTicket(getTodayDate(), 1)
+    })
     Log.i("CheckTicketScreen", "shiftListData: ${shiftListData.toString()}")
     TicketMachineMobileTheme {
         Column {
@@ -77,7 +80,7 @@ fun FilterBox() {
                 style = MaterialTheme.typography.h6,
             )
             IconButton(onClick = {
-                viewModel.getCheckTicket("2023-12-27",1)
+                viewModel.getCheckTicket(getTodayDate(),1)
             }) {
                 Icon(
                     imageVector = Icons.Default.Refresh,

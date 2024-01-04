@@ -10,9 +10,12 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -24,6 +27,7 @@ import com.example.ticketmachinemobile.SellTicket
 import com.example.ticketmachinemobile.activity.ScanActivity.Companion.SCAN_RESULT
 import com.example.ticketmachinemobile.components.TicketMobileTabRow
 import com.example.ticketmachinemobile.model.CheckTicketViewModel
+import com.example.ticketmachinemobile.model.SellTicketViewModel
 import com.example.ticketmachinemobile.overview.OverviewScreen
 import com.example.ticketmachinemobile.overview.navigateSingleTopTo
 import com.example.ticketmachinemobile.scan.ScanQrCodeScreen
@@ -56,21 +60,26 @@ class MainActivity : ComponentActivity() {
 
     private val REQUEST_CODE_SCAN = 0x0000
 
-    private lateinit var viewModel: CheckTicketViewModel
+    private lateinit var checkTicketViewModel: CheckTicketViewModel
+
+    private lateinit var sellTicketViewModel: SellTicketViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             TicketMobileApp()
         }
-//        val idCard = IDCardSDK.getInstance()
-//        val initSDK = idCard.initSDK(this)
-//        Toast.makeText(this, "initSDK: $initSDK", Toast.LENGTH_SHORT).show()
         // 初始化检票数据
-        viewModel = ViewModelProvider(this)[CheckTicketViewModel::class.java]
-        val shiftListData = viewModel.shiftInfoLiveData
-        if (shiftListData.value.isNullOrEmpty()) {
-            viewModel.getCheckTicket("2023-12-27", 1)
+        checkTicketViewModel = ViewModelProvider(this)[CheckTicketViewModel::class.java]
+        val checkTicketData = checkTicketViewModel.shiftInfoLiveData
+        if (checkTicketData.value.isNullOrEmpty()) {
+            checkTicketViewModel.getCheckTicket("2023-12-27", 1)
+        }
+        // 初始化售票数据
+        sellTicketViewModel = ViewModelProvider(this)[SellTicketViewModel::class.java]
+        val sellTicketData = sellTicketViewModel.shiftInfoLiveData
+        if (sellTicketData.value.isNullOrEmpty()) {
+            sellTicketViewModel.getSaleTicket("2023-12-27", 1)
         }
     }
 
@@ -88,6 +97,11 @@ class MainActivity : ComponentActivity() {
 
 }
 
+// 定义一个 CompositionLocal 来存储 NavController
+val LocalNavController = compositionLocalOf<NavController> {
+    error("NavController not provided")
+}
+
 @Composable
 fun TicketMobileApp(){
     TicketMachineMobileTheme {
@@ -98,39 +112,43 @@ fun TicketMobileApp(){
         val currentScreen =
             ticketMobileTabRowScreens.find { it.route == currentDestination?.route } ?: Overview
         var scanResult = ""
-        // A surface container using the 'background' color from the theme
-        Scaffold(topBar = {
-            TicketMobileTabRow(
-                allScreens = ticketMobileTabRowScreens,
-                // Pass the callback like this,
-                // defining the navigation action when a tab is selected:
-                onTabSelected = { newScreen ->
-                    navController.navigateSingleTopTo(newScreen.route)
-                },
-                currentScreen = currentScreen
-            )
-        }) { innerPadding ->
-            NavHost(
-                navController = navController,
-                // 设置默认启动页面
-                startDestination = SellTicket.route,
-                modifier = Modifier.padding(innerPadding))
-            {
-                composable(route = Overview.route){
-                    OverviewScreen()
-                }
-                composable(route = CheckTicket.route){
-                    CheckTicketScreen()
-                }
-                composable(route = ScanQrCode.route){
-                    ScanQrCodeScreen(scanResult)
-                }
-                composable(route = SellTicket.route){
-                    SellTicketScreen()
-                }
+        // 使用 CompositionLocalProvider 提供 NavController
+        CompositionLocalProvider(LocalNavController provides navController) {
+            // A surface container using the 'background' color from the theme
+            Scaffold(topBar = {
+                TicketMobileTabRow(
+                    allScreens = ticketMobileTabRowScreens,
+                    // Pass the callback like this,
+                    // defining the navigation action when a tab is selected:
+                    onTabSelected = { newScreen ->
+                        navController.navigateSingleTopTo(newScreen.route)
+                    },
+                    currentScreen = currentScreen
+                )
+            }) { innerPadding ->
+                NavHost(
+                    navController = navController,
+                    // 设置默认启动页面
+                    startDestination = SellTicket.route,
+                    modifier = Modifier.padding(innerPadding))
+                {
+                    composable(route = Overview.route){
+                        OverviewScreen()
+                    }
+                    composable(route = CheckTicket.route){
+                        CheckTicketScreen()
+                    }
+                    composable(route = ScanQrCode.route){
+                        ScanQrCodeScreen(scanResult)
+                    }
+                    composable(route = SellTicket.route){
+                        SellTicketScreen()
+                    }
 
+                }
             }
         }
+
     }
 }
 

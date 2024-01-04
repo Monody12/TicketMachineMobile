@@ -17,4 +17,10 @@ interface ApiService {
         @Query("checkType") checkType:Int
     ) : ApiResponse<MutableList<ShiftInfo>>
 
+    @GET("ticket/sale")
+    suspend fun getSaleTicket(
+        @Query("date") date:String,
+        @Query("checkType") checkType:Int
+    ) : ApiResponse<MutableList<ShiftInfo>>
+
 }

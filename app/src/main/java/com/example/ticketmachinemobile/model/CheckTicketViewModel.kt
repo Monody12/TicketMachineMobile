@@ -6,14 +6,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ticketmachinemobile.network.resp.ShiftInfo
 import com.example.ticketmachinemobile.network.RetrofitManger
+import com.example.ticketmachinemobile.util.DateUtil
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 
 class CheckTicketViewModel : ViewModel() {
-    val api by lazy { RetrofitManger.getApiService() }
-    val shiftInfoLiveData: MutableLiveData<MutableList<ShiftInfo>> by lazy {
+
+    private val api = RetrofitManger.getApiService()
+    val shiftInfoLiveData: MutableLiveData<MutableList<ShiftInfo>> =
         MutableLiveData<MutableList<ShiftInfo>>()
-    }
+
 
     var apiError: MutableLiveData<Throwable> = MutableLiveData()
 
@@ -23,7 +25,6 @@ class CheckTicketViewModel : ViewModel() {
     fun getCheckTicket(date: String, checkType: Int) {
         val exception = CoroutineExceptionHandler { coroutineContext, throwable ->
             apiError.postValue(throwable)
-            Log.i("CoroutinesViewModel", throwable.message!!)
         }
 
         viewModelScope.launch(exception) {

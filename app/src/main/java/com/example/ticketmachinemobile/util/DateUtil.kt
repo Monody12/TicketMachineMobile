@@ -47,7 +47,7 @@ object DateUtil {
      * 传入一个LocalTime，将其格式化为 Hh:mm
      */
     fun formatTimeHHMM(localTime: LocalTime): String {
-        val formatter = DateTimeFormatter.ofPattern("Hh:mm", Locale.CHINA)
+        val formatter = DateTimeFormatter.ofPattern("HH:mm", Locale.CHINA)
         return localTime.format(formatter)
     }
 
@@ -58,5 +58,22 @@ object DateUtil {
         val formatter = DateTimeFormatter.ofPattern("HH:mm:ss", Locale.CHINA)
         val localTime = LocalTime.parse(time, formatter)
         return formatTimeHHMM(localTime)
+    }
+
+    /**
+     * 传入一个LocalDate，将其格式化为 yyyy-MM-dd
+     */
+    fun formatDate(localDate: LocalDate): String {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.CHINA)
+        return localDate.format(formatter)
+    }
+
+    /**
+     * 获取当前日期，将其格式化为 yyyy-MM-dd
+     */
+    fun getTodayDate(): String {
+        val currentDate = LocalDate.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.CHINA)
+        return currentDate.format(formatter)
     }
 }

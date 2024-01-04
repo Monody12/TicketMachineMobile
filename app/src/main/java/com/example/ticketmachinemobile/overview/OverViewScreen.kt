@@ -31,6 +31,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import com.example.ticketmachinemobile.CheckTicket
+import com.example.ticketmachinemobile.SellTicket
+import com.example.ticketmachinemobile.activity.LocalNavController
 import com.example.ticketmachinemobile.components.TicketMobileSelection
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
 
@@ -105,9 +108,11 @@ fun OverviewMain(modifier: Modifier = Modifier) {
                     )
                 }
             }
+            // 获取NavController用于按钮导航
+            val navController = LocalNavController.current
             // 开始检票按钮
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { navController.navigate(CheckTicket.route) },
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(5.dp)
@@ -120,7 +125,7 @@ fun OverviewMain(modifier: Modifier = Modifier) {
             }
             // 开始售票按钮
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { navController.navigate(SellTicket.route) },
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(5.dp)
