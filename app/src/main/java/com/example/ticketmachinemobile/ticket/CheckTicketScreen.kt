@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ticketmachinemobile.components.TicketMobileSelection
+import com.example.ticketmachinemobile.data.ShiftCheckTypeList
 import com.example.ticketmachinemobile.model.CheckTicketViewModel
 import com.example.ticketmachinemobile.network.ApiResponse
 import com.example.ticketmachinemobile.network.resp.ShiftInfo
@@ -107,6 +108,7 @@ fun FilterBox() {
  */
 @Composable
 fun StationSelection() {
+    val viewModel : CheckTicketViewModel = viewModel()
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -116,8 +118,9 @@ fun StationSelection() {
     ) {
         // 起始站点
         var startStation by rememberSaveable { mutableStateOf("出发站点") }
+        val startStationList = viewModel.startStationList.observeAsState()
         TicketMobileSelection(
-            options = listOf("站点1", "站点2", "站点3"),
+            options = startStationList.value?.map { it.stationName } ?: emptyList(),
             selectedOption = startStation,
             onOptionSelected = { startStation = it },
             expanded = false,
@@ -125,8 +128,9 @@ fun StationSelection() {
         )
         // 结束站点
         var endStation by rememberSaveable { mutableStateOf("到达站点") }
+        val endStationList = viewModel.endStationList.observeAsState()
         TicketMobileSelection(
-            options = listOf("站点4", "站点5", "站点6"),
+            options = endStationList.value?.map { it.stationName } ?: emptyList(),
             selectedOption = endStation,
             onOptionSelected = { endStation = it },
             expanded = false,
@@ -139,7 +143,9 @@ fun StationSelection() {
 fun TabbedLayout() {
     var selectedTabIndex by remember { mutableStateOf(0) }
 
-    val tabs = listOf("Tab 1", "Tab 2", "Tab 3")
+    val tabs = ShiftCheckTypeList.data
+
+    val viewModel : CheckTicketViewModel = viewModel()
 
     Column {
         TabRow(
@@ -155,14 +161,14 @@ fun TabbedLayout() {
                 )
             }
         ) {
-            tabs.forEachIndexed { index, title ->
+            tabs.forEachIndexed { index, checkType ->
                 Tab(
-                    text = { Text(title) },
+                    text = { Text(checkType.name) },
                     selected = selectedTabIndex == index,
                     onClick = {
                         selectedTabIndex = index
                         // 执行相应的数据拉取流程
-//                        fetchDataForTab(selectedTabIndex)
+                        viewModel.getCheckTicket(getTodayDate(), checkType.id)
                     }
                 )
             }

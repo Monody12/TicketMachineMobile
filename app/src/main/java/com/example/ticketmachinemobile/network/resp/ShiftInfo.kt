@@ -14,9 +14,9 @@ data class ShiftInfo(
     @SerializedName("routeId")
     var routeId: Int,
     /**
-     * 班次名称
+     * 司机名称
      */
-    @SerializedName("name")
+    @SerializedName("driverName")
     var name: String?,
     /**
      * 线路名称
@@ -68,7 +68,7 @@ data class Station(
     /**
      * 站点id
      */
-    @SerializedName("id")
+    @SerializedName("stationId")
     var id: Int,
     /**
      * 站点名称
@@ -90,4 +90,32 @@ data class Station(
      */
     @SerializedName("personCount")
     var personCount : Int = 0
-)
+){
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return if (other is Station) {
+            other.id == id
+        } else {
+            false
+        }
+    }
+
+    constructor() : this(
+        id = 0,
+        stationName = "",
+        arrivalTime = "",
+        price = 0,
+        personCount = 0
+    )
+
+    constructor(id: Int, stationName: String) : this(
+        id = id,
+        stationName = stationName,
+        arrivalTime = "",
+        price = 0,
+        personCount = 0
+    )
+}

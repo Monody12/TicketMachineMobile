@@ -1,6 +1,3 @@
-import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
-import org.jetbrains.kotlin.ir.backend.js.compile
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
