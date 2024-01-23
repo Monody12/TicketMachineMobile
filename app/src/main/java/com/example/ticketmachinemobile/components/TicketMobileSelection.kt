@@ -26,10 +26,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TicketMobileSelection(
-    options: List<String>,
-    selectedOption: String,
-    onOptionSelected: (String) -> Unit,
+fun <T> TicketMobileSelection(
+    options: List<T>,
+    selectedOption: T,
+    onOptionSelected: (T) -> Unit,
+    showContent: (T) -> String = {it.toString()},
     expanded: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -46,7 +47,7 @@ fun TicketMobileSelection(
     ) {
         // ClickableText is used as a button to trigger the dropdown
         ClickableText(
-            text = AnnotatedString(selectedOption),
+            text = AnnotatedString(showContent(selectedOption)),
             onClick = {
                 expandedState = !expandedState
             },
@@ -68,7 +69,7 @@ fun TicketMobileSelection(
                     onOptionSelected(option)
                     expandedState = false
                 }) {
-                    Text(option)
+                    Text(showContent(option))
                 }
             }
         }

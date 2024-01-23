@@ -40,7 +40,7 @@ import com.huawei.hms.ml.scan.HmsScan
  * 扫码页面
  */
 @Composable
-fun ScanQrCodeScreen(mode :String = TicketConstant.CHECK_TICKET) {
+fun ScanQrCodeScreen(mode: String = TicketConstant.CHECK_TICKET) {
     // 获取当前的 Context
     val context = LocalContext.current
     var scannedCode by remember { mutableStateOf("") }
@@ -121,7 +121,7 @@ fun ScanQrCodeScreen(mode :String = TicketConstant.CHECK_TICKET) {
                 scannedCode = (results?.get(0) as HmsScan).originalValue
                 // 处理扫码结果
                 if (scannedCode != null && scannedCode.isNotEmpty()) {
-                    Toast.makeText(context,"扫码结果：${scannedCode}",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "扫码结果：${scannedCode}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -141,8 +141,8 @@ fun ScanQrCodeScreen(mode :String = TicketConstant.CHECK_TICKET) {
     }
 }
 
-fun changeMode(currentMode :String) :String{
-    val modeList = listOf("检票", "退票", "开票")
+fun changeMode(currentMode: String): String {
+    val modeList = listOf("检票", "通用检票", "退票", "开票")
     val index = modeList.indexOf(currentMode)
     return modeList[(index + 1) % modeList.size]
 }

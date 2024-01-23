@@ -15,10 +15,13 @@ import kotlinx.coroutines.launch
 class CheckTicketViewModel : ViewModel() {
 
     private val api = RetrofitManger.getApiService()
-    val shiftInfoLiveData: MutableLiveData<MutableList<ShiftInfo>> =
-        MutableLiveData<MutableList<ShiftInfo>>()
+    var shiftInfoList: List<ShiftInfo> = emptyList()
 
-
+    /**
+     * 查看的班次列表（用作展示筛选结果）
+     */
+    val showShiftInfoLiveData : MutableLiveData<List<ShiftInfo>> =
+        MutableLiveData<List<ShiftInfo>>()
     /**
      * 出发站点筛选列表
      */
@@ -39,6 +42,16 @@ class CheckTicketViewModel : ViewModel() {
      */
     val defaultEndStation = mutableStateOf(Station(0, "到达站点"))
 
+    /**
+     * 当前选择的出发站点
+     */
+    var selectedStartStation = mutableStateOf(defaultStartStation.value)
+
+    /**
+     * 当前选择的到达站点
+     */
+    var selectedEndStation = mutableStateOf(defaultEndStation.value)
+
     var apiError: MutableLiveData<Throwable> = MutableLiveData()
 
     /**
@@ -53,7 +66,8 @@ class CheckTicketViewModel : ViewModel() {
             val response = api.getCheckTicket(date, checkType)
             if (response.code == 200) {
                 val data: MutableList<ShiftInfo> = response.data!!
-                shiftInfoLiveData.postValue(data)
+                shiftInfoList = data
+                showShiftInfoLiveData.postValue(data)
                 updateStationList(data)
             } else {
                 apiError.postValue(Throwable(response.msg))
@@ -82,5 +96,34 @@ class CheckTicketViewModel : ViewModel() {
             }
         }
         endStationList.postValue(endStationSet.toList())
+    }
+
+    /**
+     * 筛选出发站点
+     */
+    fun onSelectedStartStation(station: Station) {
+        val filterList = shiftInfoList.filter {
+            it.stationList[0].id == station.id
+        }
+        showShiftInfoLiveData.postValue(filterList)
+        // 重置到达站点筛选
+        selectedEndStation.value = defaultEndStation.value
+    }
+
+    /**
+     * 筛选到达站点
+     */
+    fun onSelectedEndStation(station: Station) {
+        val filterList = mutableListOf<ShiftInfo>()
+        shiftInfoList.forEach {
+            it.stationList.forEachIndexed { index, stationItem ->
+                if (index != 0 && stationItem.id == station.id) {
+                    filterList.add(it)
+                }
+            }
+        }
+        showShiftInfoLiveData.postValue(filterList)
+        // 重置出发站点筛选
+        selectedStartStation.value = defaultStartStation.value
     }
 }

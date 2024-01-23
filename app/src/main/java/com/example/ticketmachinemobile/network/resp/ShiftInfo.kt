@@ -1,5 +1,6 @@
 package com.example.ticketmachinemobile.network.resp
 
+import androidx.compose.runtime.saveable.Saver
 import com.google.gson.annotations.SerializedName
 
 data class ShiftInfo(
@@ -119,3 +120,20 @@ data class Station(
         personCount = 0
     )
 }
+
+val StationSaver: Saver<Station, *> = Saver(
+    save = { station ->
+        // 将 Station 对象转换为可保存的形式，比如使用 Bundle 支持的类型
+        listOf(station.id, station.stationName, station.arrivalTime, station.price, station.personCount)
+    },
+    restore = { list ->
+        // 将保存的数据恢复为 Station 对象
+        Station(
+            id = list[0] as Int,
+            stationName = list[1] as String,
+            arrivalTime = list[2] as String,
+            price = list[3] as Int,
+            personCount = list[4] as Int
+        )
+    }
+)

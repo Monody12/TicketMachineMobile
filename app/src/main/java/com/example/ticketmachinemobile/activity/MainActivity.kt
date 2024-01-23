@@ -70,17 +70,17 @@ class MainActivity : ComponentActivity() {
             TicketMobileApp()
         }
         // 初始化检票数据
-        checkTicketViewModel = ViewModelProvider(this)[CheckTicketViewModel::class.java]
-        val checkTicketData = checkTicketViewModel.shiftInfoLiveData
-        if (checkTicketData.value.isNullOrEmpty()) {
-            checkTicketViewModel.getCheckTicket("2023-12-27", 1)
-        }
+//        checkTicketViewModel = ViewModelProvider(this)[CheckTicketViewModel::class.java]
+//        val checkTicketData = checkTicketViewModel.showShiftInfoLiveData
+//        if (checkTicketData.value.isNullOrEmpty()) {
+//            checkTicketViewModel.getCheckTicket("2023-12-27", 1)
+//        }
         // 初始化售票数据
-        sellTicketViewModel = ViewModelProvider(this)[SellTicketViewModel::class.java]
-        val sellTicketData = sellTicketViewModel.shiftInfoLiveData
-        if (sellTicketData.value.isNullOrEmpty()) {
-            sellTicketViewModel.getSaleTicket("2023-12-27", 1)
-        }
+//        sellTicketViewModel = ViewModelProvider(this)[SellTicketViewModel::class.java]
+//        val sellTicketData = sellTicketViewModel.shiftInfoLiveData
+//        if (sellTicketData.value.isNullOrEmpty()) {
+//            sellTicketViewModel.getSaleTicket("2023-12-27", 1)
+//        }
     }
 
 

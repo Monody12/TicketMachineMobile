@@ -32,20 +32,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ticketmachinemobile.components.TicketMobileSelection
 import com.example.ticketmachinemobile.data.ShiftCheckTypeList
 import com.example.ticketmachinemobile.model.CheckTicketViewModel
 import com.example.ticketmachinemobile.network.ApiResponse
-import com.example.ticketmachinemobile.network.resp.ShiftInfo
+import com.example.ticketmachinemobile.network.resp.Station
+import com.example.ticketmachinemobile.network.resp.StationSaver
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
 import com.example.ticketmachinemobile.util.DateUtil.getTodayDate
 
 @Composable
 fun CheckTicketScreen() {
     val viewModel: CheckTicketViewModel = viewModel()
-    val shiftListData by viewModel.shiftInfoLiveData.observeAsState()
+    val shiftListData by viewModel.showShiftInfoLiveData.observeAsState()
     // 界面启动时初始化
     LaunchedEffect(key1 = Unit, block = {
         viewModel.getCheckTicket(getTodayDate(), 1)
@@ -69,7 +69,7 @@ fun CheckTicketScreen() {
 @Composable
 fun FilterBox() {
     val context = LocalContext.current
-    val viewModel : CheckTicketViewModel = viewModel()
+    val viewModel: CheckTicketViewModel = viewModel()
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -81,7 +81,9 @@ fun FilterBox() {
                 style = MaterialTheme.typography.h6,
             )
             IconButton(onClick = {
-                viewModel.getCheckTicket(getTodayDate(),1)
+                viewModel.getCheckTicket(getTodayDate(), 1)
+                viewModel.selectedStartStation.value = viewModel.defaultStartStation.value
+                viewModel.selectedEndStation.value = viewModel.defaultEndStation.value
             }) {
                 Icon(
                     imageVector = Icons.Default.Refresh,
@@ -108,7 +110,7 @@ fun FilterBox() {
  */
 @Composable
 fun StationSelection() {
-    val viewModel : CheckTicketViewModel = viewModel()
+    val viewModel: CheckTicketViewModel = viewModel()
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -117,22 +119,29 @@ fun StationSelection() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         // 起始站点
-        var startStation by rememberSaveable { mutableStateOf("出发站点") }
+        var startStation by rememberSaveable(stateSaver = StationSaver) { viewModel.selectedStartStation }
         val startStationList = viewModel.startStationList.observeAsState()
-        TicketMobileSelection(
-            options = startStationList.value?.map { it.stationName } ?: emptyList(),
+        TicketMobileSelection<Station>(
+            options = startStationList.value?: emptyList(),
             selectedOption = startStation,
-            onOptionSelected = { startStation = it },
+            onOptionSelected = {
+                startStation = it
+                viewModel.onSelectedStartStation(it)
+            },
+            showContent = { it.stationName },
             expanded = false,
             modifier = Modifier.weight(1f) // 使用weight属性
         )
         // 结束站点
-        var endStation by rememberSaveable { mutableStateOf("到达站点") }
+        val endStation by rememberSaveable(stateSaver = StationSaver) { viewModel.selectedEndStation }
         val endStationList = viewModel.endStationList.observeAsState()
-        TicketMobileSelection(
-            options = endStationList.value?.map { it.stationName } ?: emptyList(),
+        TicketMobileSelection<Station>(
+            options = endStationList.value?: emptyList(),
             selectedOption = endStation,
-            onOptionSelected = { endStation = it },
+            onOptionSelected = {
+                viewModel.onSelectedEndStation(it)
+            },
+            showContent = { it.stationName },
             expanded = false,
             modifier = Modifier.weight(1f) // 使用weight属性
         )
@@ -145,7 +154,7 @@ fun TabbedLayout() {
 
     val tabs = ShiftCheckTypeList.data
 
-    val viewModel : CheckTicketViewModel = viewModel()
+    val viewModel: CheckTicketViewModel = viewModel()
 
     Column {
         TabRow(
