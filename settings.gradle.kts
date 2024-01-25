@@ -19,3 +19,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "TicketMachineMobile"
 include(":app")
+include(":ocr_ui")

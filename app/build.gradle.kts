@@ -22,8 +22,32 @@ android {
 
     }
 
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("/Users/monody/Documents/Android/test.keystore")
+            storePassword = "123456"
+            keyPassword = "123456"
+            keyAlias = "testalias"
+        }
+        create("release") {
+            storeFile = file("/Users/monody/Documents/Android/test.keystore")
+            storePassword = "123456"
+            keyAlias = "testalias"
+            keyPassword = "123456"
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        debug {
+            signingConfig = signingConfigs.getByName("debug")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -134,6 +158,11 @@ dependencies {
 
     // 兼容低版本api
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.2")
+
+    // 引入百度ocr_ui示例
+    implementation(project(":ocr_ui"))
+    // 引入百度ocr
+    implementation(files("libs/ocrsdk.aar"))
 }
 
 configurations {

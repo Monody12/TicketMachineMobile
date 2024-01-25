@@ -1,5 +1,6 @@
 package com.example.ticketmachinemobile.overview
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,6 +35,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.example.ticketmachinemobile.CheckTicket
 import com.example.ticketmachinemobile.SellTicket
+import com.example.ticketmachinemobile.activity.IDCardActivity
 import com.example.ticketmachinemobile.activity.LocalNavController
 import com.example.ticketmachinemobile.components.TicketMobileSelection
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
@@ -60,6 +63,7 @@ fun NavHostController.navigateSingleTopTo(route: String) =
 
 @Composable
 fun OverviewMain(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .padding(16.dp)
@@ -100,7 +104,10 @@ fun OverviewMain(modifier: Modifier = Modifier) {
                     )
                 }
                 // 刷新Icon
-                IconButton(onClick = { }) {
+                IconButton(onClick = {
+                    val intent =Intent(context, IDCardActivity::class.java)
+                    context.startActivity(intent)
+                }) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = "刷新",

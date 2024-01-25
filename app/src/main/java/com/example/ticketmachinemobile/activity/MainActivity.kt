@@ -2,11 +2,13 @@ package com.example.ticketmachinemobile.activity
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -14,12 +16,15 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.baidu.ocr.sdk.OCR
+import com.baidu.ocr.sdk.OnResultListener
+import com.baidu.ocr.sdk.exception.OCRError
+import com.baidu.ocr.sdk.model.AccessToken
 import com.example.ticketmachinemobile.CheckTicket
 import com.example.ticketmachinemobile.Overview
 import com.example.ticketmachinemobile.ScanQrCode
@@ -35,7 +40,6 @@ import com.example.ticketmachinemobile.ticket.CheckTicketScreen
 import com.example.ticketmachinemobile.ticket.SellTicketScreen
 import com.example.ticketmachinemobile.ticketMobileTabRowScreens
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
-import com.example.ticketmachinemobile.util.IDCardSDK
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -64,11 +68,18 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var sellTicketViewModel: SellTicketViewModel
 
+    private lateinit var alertDialog: AlertDialog.Builder
+
+    private var hasGotToken = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        alertDialog = AlertDialog.Builder(this)
         setContent {
             TicketMobileApp()
         }
+        // 初始化百度ocr
+        initAccessToken()
         // 初始化检票数据
 //        checkTicketViewModel = ViewModelProvider(this)[CheckTicketViewModel::class.java]
 //        val checkTicketData = checkTicketViewModel.showShiftInfoLiveData
@@ -84,6 +95,23 @@ class MainActivity : ComponentActivity() {
     }
 
 
+    /**
+     * 以license文件方式初始化
+     */
+    private fun initAccessToken() {
+        OCR.getInstance(applicationContext).initAccessToken(object : OnResultListener<AccessToken> {
+            override fun onResult(accessToken: AccessToken) {
+                val token = accessToken.accessToken
+                hasGotToken = true
+            }
+
+            override fun onError(error: OCRError) {
+                error.printStackTrace()
+                error.message?.let { alertText("licence方式获取token失败", it) }
+            }
+        }, applicationContext)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -95,6 +123,31 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<String?>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            initAccessToken()
+        } else {
+            Toast.makeText(
+                applicationContext,
+                "需要android.permission.READ_PHONE_STATE",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    private fun alertText(title: String, message: String) {
+        runOnUiThread {
+            alertDialog.setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("确定", null)
+                .show()
+        }
+    }
 }
 
 // 定义一个 CompositionLocal 来存储 NavController
@@ -129,7 +182,7 @@ fun TicketMobileApp(){
                 NavHost(
                     navController = navController,
                     // 设置默认启动页面
-                    startDestination = SellTicket.route,
+                    startDestination = Overview.route,
                     modifier = Modifier.padding(innerPadding))
                 {
                     composable(route = Overview.route){

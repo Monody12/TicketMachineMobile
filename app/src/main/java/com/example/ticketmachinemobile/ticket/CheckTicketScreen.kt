@@ -133,12 +133,13 @@ fun StationSelection() {
             modifier = Modifier.weight(1f) // 使用weight属性
         )
         // 结束站点
-        val endStation by rememberSaveable(stateSaver = StationSaver) { viewModel.selectedEndStation }
+        var endStation by rememberSaveable(stateSaver = StationSaver) { viewModel.selectedEndStation }
         val endStationList = viewModel.endStationList.observeAsState()
         TicketMobileSelection<Station>(
             options = endStationList.value?: emptyList(),
             selectedOption = endStation,
             onOptionSelected = {
+                endStation = it
                 viewModel.onSelectedEndStation(it)
             },
             showContent = { it.stationName },

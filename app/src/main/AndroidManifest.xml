@@ -24,6 +24,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TicketMachineMobile"
         tools:targetApi="31"
+        tools:replace="android:theme"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".activity.MainActivity"
@@ -40,6 +41,9 @@
         <activity android:name="com.huawei.hms.hmsscankit.ScanKitActivity" />
         <activity android:name=".activity.ScanActivity"/>
         <activity android:name=".activity.SellTicketPayActivity"/>
+        <activity
+            android:name=".activity.IDCardActivity"
+            android:theme="@style/Theme.AppCompat.Light"/>
     </application>
 
 
