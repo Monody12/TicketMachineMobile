@@ -119,7 +119,7 @@ fun StationSelection() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         // 起始站点
-        var startStation by rememberSaveable(stateSaver = StationSaver) { viewModel.selectedStartStation }
+        var startStation by remember { viewModel.selectedStartStation }
         val startStationList = viewModel.startStationList.observeAsState()
         TicketMobileSelection<Station>(
             options = startStationList.value?: emptyList(),
@@ -133,7 +133,7 @@ fun StationSelection() {
             modifier = Modifier.weight(1f) // 使用weight属性
         )
         // 结束站点
-        var endStation by rememberSaveable(stateSaver = StationSaver) { viewModel.selectedEndStation }
+        var endStation by remember { viewModel.selectedEndStation }
         val endStationList = viewModel.endStationList.observeAsState()
         TicketMobileSelection<Station>(
             options = endStationList.value?: emptyList(),
