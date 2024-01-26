@@ -21,6 +21,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.baidu.ocr.sdk.OCR
 import com.baidu.ocr.sdk.OnResultListener
 import com.baidu.ocr.sdk.exception.OCRError
@@ -31,6 +32,8 @@ import com.example.ticketmachinemobile.ScanQrCode
 import com.example.ticketmachinemobile.SellTicket
 import com.example.ticketmachinemobile.activity.ScanActivity.Companion.SCAN_RESULT
 import com.example.ticketmachinemobile.components.TicketMobileTabRow
+import com.example.ticketmachinemobile.constant.TicketConstant
+import com.example.ticketmachinemobile.data.ScanQrCodeData
 import com.example.ticketmachinemobile.model.CheckTicketViewModel
 import com.example.ticketmachinemobile.model.SellTicketViewModel
 import com.example.ticketmachinemobile.overview.OverviewScreen
@@ -40,6 +43,7 @@ import com.example.ticketmachinemobile.ticket.CheckTicketScreen
 import com.example.ticketmachinemobile.ticket.SellTicketScreen
 import com.example.ticketmachinemobile.ticketMobileTabRowScreens
 import com.example.ticketmachinemobile.ui.theme.TicketMachineMobileTheme
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -156,7 +160,7 @@ val LocalNavController = compositionLocalOf<NavController> {
 }
 
 @Composable
-fun TicketMobileApp(){
+fun TicketMobileApp() {
     TicketMachineMobileTheme {
         val navController = rememberNavController()
         val currentBackStack by navController.currentBackStackEntryAsState()
@@ -164,7 +168,12 @@ fun TicketMobileApp(){
         val currentDestination = currentBackStack?.destination
         val currentScreen =
             ticketMobileTabRowScreens.find { it.route == currentDestination?.route } ?: Overview
-        var scanResult = ""
+        val noArgScan = Gson().toJson(
+            ScanQrCodeData(
+                shiftInfo = null,
+                mode = TicketConstant.CHECK_TICKET
+            )
+        )
         // 使用 CompositionLocalProvider 提供 NavController
         CompositionLocalProvider(LocalNavController provides navController) {
             // A surface container using the 'background' color from the theme
@@ -183,18 +192,25 @@ fun TicketMobileApp(){
                     navController = navController,
                     // 设置默认启动页面
                     startDestination = Overview.route,
-                    modifier = Modifier.padding(innerPadding))
+                    modifier = Modifier.padding(innerPadding)
+                )
                 {
-                    composable(route = Overview.route){
+                    composable(route = Overview.route) {
                         OverviewScreen()
                     }
-                    composable(route = CheckTicket.route){
+                    composable(route = CheckTicket.route) {
                         CheckTicketScreen()
                     }
-                    composable(route = ScanQrCode.route){
-                        ScanQrCodeScreen(scanResult)
+                    composable(route = "${ScanQrCode.route}?scanDataJson={scanDataJson}", arguments = listOf(
+                        navArgument("scanDataJson") {
+                            defaultValue = noArgScan
+                        }
+                    )) {
+                        val scanDataJson = it.arguments?.getString("scanDataJson")
+                        ScanQrCodeScreen(scanDataJson ?: noArgScan)
                     }
-                    composable(route = SellTicket.route){
+
+                    composable(route = SellTicket.route) {
                         SellTicketScreen()
                     }
 

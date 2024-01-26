@@ -24,11 +24,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.ticketmachinemobile.ScanQrCode
+import com.example.ticketmachinemobile.activity.LocalNavController
 import com.example.ticketmachinemobile.activity.SellTicketPayActivity
+import com.example.ticketmachinemobile.constant.TicketConstant
+import com.example.ticketmachinemobile.data.ScanQrCodeData
+import com.example.ticketmachinemobile.model.ScanQrCodeViewModel
 import com.example.ticketmachinemobile.model.SellTicketViewModel
 import com.example.ticketmachinemobile.network.resp.ShiftInfo
 import com.example.ticketmachinemobile.network.resp.Station
 import com.example.ticketmachinemobile.util.DateUtil
+import com.google.gson.Gson
 
 private const val TAG = "ShiftLayout"
 
@@ -159,7 +165,12 @@ fun ShiftList(
             .zIndex(0f) // 设置LazyColumn的zIndex
     ) {
         items(shiftInfoList.size) { index ->
-            ShiftLayout(shiftInfoList[index], showDialog, updateShiftClickEvent, *content)
+            Column {
+                ShiftLayout(shiftInfoList[index], showDialog, updateShiftClickEvent,
+                    {
+                        CheckButtonRow(shiftInfo = shiftInfoList[index])
+                    })
+            }
         }
     }
 }
@@ -168,7 +179,9 @@ fun ShiftList(
  * 检票按钮 Row
  */
 @Composable
-fun CheckButtonRow(modifier: Modifier = Modifier) {
+fun CheckButtonRow(modifier: Modifier = Modifier, shiftInfo: ShiftInfo) {
+    val navController = LocalNavController.current
+    val scanQrCodeViewModel: ScanQrCodeViewModel = viewModel()
     // 扫码检票、身份证检票、订单列表 按钮
     Row(
         modifier = modifier
@@ -180,7 +193,11 @@ fun CheckButtonRow(modifier: Modifier = Modifier) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         // 扫码检票
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = {
+            val scanData = ScanQrCodeData(shiftInfo = shiftInfo,mode = TicketConstant.CHECK_TICKET)
+            val scanDataJson = Gson().toJson(scanData)
+            navController.navigate("${ScanQrCode.route}?scanDataJson=$scanDataJson")
+        }) {
             Text(
                 text = "扫码检票",
                 style = MaterialTheme.typography.body2.copy(color = Color.White)

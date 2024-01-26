@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -28,11 +29,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ticketmachinemobile.activity.ScanActivity
 import com.example.ticketmachinemobile.activity.MainActivity.Companion.BITMAP_CODE
 import com.example.ticketmachinemobile.activity.MainActivity.Companion.DECODE_MODE
 import com.example.ticketmachinemobile.activity.ScanActivity.Companion.SCAN_RESULT
 import com.example.ticketmachinemobile.constant.TicketConstant
+import com.example.ticketmachinemobile.data.ScanQrCodeData
+import com.example.ticketmachinemobile.model.CheckTicketViewModel
+import com.example.ticketmachinemobile.model.ScanQrCodeViewModel
+import com.google.gson.Gson
 import com.huawei.hms.ml.scan.HmsScan
 
 
@@ -40,12 +46,13 @@ import com.huawei.hms.ml.scan.HmsScan
  * 扫码页面
  */
 @Composable
-fun ScanQrCodeScreen(mode: String = TicketConstant.CHECK_TICKET) {
+fun ScanQrCodeScreen(scanDataJson : String) {
+    val scanData : ScanQrCodeData = Gson().fromJson(scanDataJson, ScanQrCodeData::class.java)
     // 获取当前的 Context
     val context = LocalContext.current
     var scannedCode by remember { mutableStateOf("") }
 
-    var currentMode by rememberSaveable { mutableStateOf(mode) }
+    var currentMode by rememberSaveable { mutableStateOf(scanData.mode) }
     var autoExecute by rememberSaveable { mutableStateOf(false) }
 
     Column(
@@ -62,6 +69,15 @@ fun ScanQrCodeScreen(mode: String = TicketConstant.CHECK_TICKET) {
                 .weight(1f)
         ) {
             Column {
+                // 选中班次
+                if (scanData.shiftInfo != null) {
+                    Text(
+                        text = "选中班次: ${scanData.shiftInfo}",
+                        modifier = Modifier.padding(16.dp),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                }
                 // 显示当前模式：检票、退票
                 Text(
                     text = "模式: $currentMode",

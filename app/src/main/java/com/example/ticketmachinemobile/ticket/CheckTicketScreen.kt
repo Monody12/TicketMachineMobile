@@ -3,6 +3,7 @@ package com.example.ticketmachinemobile.ticket
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -44,7 +45,8 @@ import com.example.ticketmachinemobile.util.DateUtil.getTodayDate
 
 @Composable
 fun CheckTicketScreen() {
-    val viewModel: CheckTicketViewModel = viewModel()
+    val activity = LocalContext.current as ComponentActivity
+    val viewModel: CheckTicketViewModel = viewModel(viewModelStoreOwner = activity)
     val shiftListData by viewModel.showShiftInfoLiveData.observeAsState()
     // 界面启动时初始化
     LaunchedEffect(key1 = Unit, block = {
@@ -59,7 +61,6 @@ fun CheckTicketScreen() {
                     null,
                     null,
                     shiftInfoList = it,
-                    { CheckButtonRow() },
                 )
             }
         }
