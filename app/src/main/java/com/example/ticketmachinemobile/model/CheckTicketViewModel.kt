@@ -5,8 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ticketmachinemobile.network.ApiResponse
 import com.example.ticketmachinemobile.network.resp.ShiftInfo
 import com.example.ticketmachinemobile.network.RetrofitManger
+import com.example.ticketmachinemobile.network.req.CheckTicketReq
+import com.example.ticketmachinemobile.network.resp.CheckShiftResp
 import com.example.ticketmachinemobile.network.resp.Station
 import com.example.ticketmachinemobile.util.DateUtil
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -52,6 +55,11 @@ class CheckTicketViewModel : ViewModel() {
      */
     var selectedEndStation = mutableStateOf(defaultEndStation.value)
 
+    /**
+     * 请求检票结果
+     */
+    var checkTicketResult : MutableLiveData<ApiResponse<List<CheckShiftResp>>> = MutableLiveData()
+
     var apiError: MutableLiveData<Throwable> = MutableLiveData()
 
     /**
@@ -74,6 +82,21 @@ class CheckTicketViewModel : ViewModel() {
             }
         }
 
+    }
+
+    /**
+     * 提交检票请求
+     * 扫码检票（根据订单号）
+     */
+    fun submitCheckTicket(checkTicketReq: CheckTicketReq) {
+        val exception = CoroutineExceptionHandler { coroutineContext, throwable ->
+            apiError.postValue(throwable)
+        }
+
+        viewModelScope.launch(exception) {
+            val response = api.postCheckOrder(checkTicketReq)
+            checkTicketResult.postValue(response)
+        }
     }
 
     /**

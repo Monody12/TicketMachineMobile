@@ -19,6 +19,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -38,6 +39,7 @@ import com.example.ticketmachinemobile.constant.TicketConstant
 import com.example.ticketmachinemobile.data.ScanQrCodeData
 import com.example.ticketmachinemobile.model.CheckTicketViewModel
 import com.example.ticketmachinemobile.model.ScanQrCodeViewModel
+import com.example.ticketmachinemobile.network.req.CheckTicketReq
 import com.google.gson.Gson
 import com.huawei.hms.ml.scan.HmsScan
 
@@ -46,11 +48,13 @@ import com.huawei.hms.ml.scan.HmsScan
  * 扫码页面
  */
 @Composable
-fun ScanQrCodeScreen(scanDataJson : String) {
-    val scanData : ScanQrCodeData = Gson().fromJson(scanDataJson, ScanQrCodeData::class.java)
+fun ScanQrCodeScreen(scanDataJson: String) {
+    val scanData: ScanQrCodeData = Gson().fromJson(scanDataJson, ScanQrCodeData::class.java)
     // 获取当前的 Context
     val context = LocalContext.current
     var scannedCode by remember { mutableStateOf("") }
+    val checkTicketViewModel : CheckTicketViewModel = viewModel()
+    var checkTicketResult = checkTicketViewModel.checkTicketResult.observeAsState()
 
     var currentMode by rememberSaveable { mutableStateOf(scanData.mode) }
     var autoExecute by rememberSaveable { mutableStateOf(false) }
@@ -71,8 +75,9 @@ fun ScanQrCodeScreen(scanDataJson : String) {
             Column {
                 // 选中班次
                 if (scanData.shiftInfo != null) {
+                    val shiftInfo = scanData.shiftInfo
                     Text(
-                        text = "选中班次: ${scanData.shiftInfo}",
+                        text = "选中班次: \n线路名称：${shiftInfo.routeName}\n出发时间：${shiftInfo.startTime}",
                         modifier = Modifier.padding(16.dp),
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
@@ -85,24 +90,31 @@ fun ScanQrCodeScreen(scanDataJson : String) {
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
+                // 显示检票结果
+                Text(
+                    text = "检票结果: ${checkTicketResult.value}",
+                    modifier = Modifier.padding(16.dp),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
                 // 切换模式
-                Button(
-                    onClick = {
-                        currentMode = changeMode(currentMode)
-                    },
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(text = "切换")
-                }
+//                Button(
+//                    onClick = {
+//                        currentMode = changeMode(currentMode)
+//                    },
+//                    modifier = Modifier.padding(16.dp)
+//                ) {
+//                    Text(text = "切换")
+//                }
                 // 设置自动执行
-                Button(
-                    onClick = {
-                        autoExecute = !autoExecute
-                    },
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(text = "${if (autoExecute) "关闭" else "开启"}自动执行")
-                }
+//                Button(
+//                    onClick = {
+//                        autoExecute = !autoExecute
+//                    },
+//                    modifier = Modifier.padding(16.dp)
+//                ) {
+//                    Text(text = "${if (autoExecute) "关闭" else "开启"}自动执行")
+//                }
 
             }
         }
@@ -138,6 +150,11 @@ fun ScanQrCodeScreen(scanDataJson : String) {
                 // 处理扫码结果
                 if (scannedCode != null && scannedCode.isNotEmpty()) {
                     Toast.makeText(context, "扫码结果：${scannedCode}", Toast.LENGTH_SHORT).show()
+                    checkTicketViewModel.submitCheckTicket(CheckTicketReq(
+                        orderNo = scannedCode,
+                        shiftId = scanData.shiftInfo?.id,
+                        idCard = null
+                    ))
                 }
             }
         }
