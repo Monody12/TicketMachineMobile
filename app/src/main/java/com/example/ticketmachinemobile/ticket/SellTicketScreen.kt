@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -84,33 +85,26 @@ fun SellTicketScreen() {
 
 @Composable
 fun DateSelectionScreen() {
-    val dateList = remember { mutableListOf<String>() }
-    val weekList = remember { mutableListOf<String>() }
-    // 格式为 yyyy-MM-dd
-    val formatStringList = remember { mutableListOf<String>() }
-    val currentDate = LocalDate.now()
-    val formatter = DateTimeFormatter.ofPattern("M月d日")
-    val locale = Locale("zh", "CN") // 使用中文语言环境
-
-    for (i in 0 until 10) {
-        val date = currentDate.plusDays(i.toLong())
-        val formattedDate = date.format(formatter)
-        val dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.FULL, locale)
-
-        dateList.add(formattedDate)
-        weekList.add(dayOfWeek)
-        formatStringList.add(DateUtil.formatDate(date))
+    val (dateList, weekList, formatStringList) = remember {
+        DateUtil.generateDateAndDayLists()
     }
-
+    // 创建LazyListState
+    val listState = rememberLazyListState()
     Row {
         // 最近日期选择器
         LazyRow(
+            state = listState, // 将LazyListState应用到LazyRow
             modifier = Modifier
                 .weight(7f)
         ) {
-            items(dateList.size) { index ->
-                DateItem(weekList[index], dateList[index], formatStringList[index])
-            }
+            items(
+                count = dateList.size,
+                key = { index -> dateList[index] },
+                itemContent = {
+                    index ->
+                    DateItem(weekList[index], dateList[index], formatStringList[index])
+                }
+            )
         }
         // 当月及下月日期选择器（一个日期icon按钮）
         IconButton(
@@ -127,6 +121,7 @@ fun DateSelectionScreen() {
     }
 
 }
+
 
 @Composable
 fun DateItem(week: String, date: String, formatString: String) {

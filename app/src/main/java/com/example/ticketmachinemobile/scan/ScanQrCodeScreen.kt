@@ -1,10 +1,12 @@
 package com.example.ticketmachinemobile.scan
 
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Surface
+
+
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -35,10 +37,8 @@ import com.example.ticketmachinemobile.activity.ScanActivity
 import com.example.ticketmachinemobile.activity.MainActivity.Companion.BITMAP_CODE
 import com.example.ticketmachinemobile.activity.MainActivity.Companion.DECODE_MODE
 import com.example.ticketmachinemobile.activity.ScanActivity.Companion.SCAN_RESULT
-import com.example.ticketmachinemobile.constant.TicketConstant
 import com.example.ticketmachinemobile.data.ScanQrCodeData
 import com.example.ticketmachinemobile.model.CheckTicketViewModel
-import com.example.ticketmachinemobile.model.ScanQrCodeViewModel
 import com.example.ticketmachinemobile.network.req.CheckTicketReq
 import com.google.gson.Gson
 import com.huawei.hms.ml.scan.HmsScan
@@ -54,7 +54,7 @@ fun ScanQrCodeScreen(scanDataJson: String) {
     val context = LocalContext.current
     var scannedCode by remember { mutableStateOf("") }
     val checkTicketViewModel : CheckTicketViewModel = viewModel()
-    var checkTicketResult = checkTicketViewModel.checkTicketResult.observeAsState()
+    val checkTicketResult by checkTicketViewModel.checkTicketResult.observeAsState()
 
     var currentMode by rememberSaveable { mutableStateOf(scanData.mode) }
     var autoExecute by rememberSaveable { mutableStateOf(false) }
@@ -86,13 +86,16 @@ fun ScanQrCodeScreen(scanDataJson: String) {
                 // 显示当前模式：检票、退票
                 Text(
                     text = "模式: $currentMode",
-                    modifier = Modifier.padding(16.dp),
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
                 // 显示检票结果
+                val checkState = if (checkTicketResult==null) "" else{
+                    if (checkTicketResult!!.code==200) "检票成功"
+                    else "检票失败"
+                }
                 Text(
-                    text = "检票结果: ${checkTicketResult.value}",
+                    text = "检票结果: $checkState",
                     modifier = Modifier.padding(16.dp),
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
@@ -178,4 +181,13 @@ fun changeMode(currentMode: String): String {
     val modeList = listOf("检票", "通用检票", "退票", "开票")
     val index = modeList.indexOf(currentMode)
     return modeList[(index + 1) % modeList.size]
+}
+
+@Composable
+fun RelatedOrdersShow(){
+    Surface {
+        LazyColumn{
+
+        }
+    }
 }

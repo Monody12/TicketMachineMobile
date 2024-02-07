@@ -14,7 +14,7 @@ object RetrofitManger {
     private const val CONNECTION_TIME_OUT = 10L
     private const val READ_TIME_OUT = 10L
 
-    private var API_URL = "http://192.168.100.105:8080/"
+    private var API_URL = "http://192.168.100.169:8080/"
 //    private var API_URL = "http://192.168.0.4:8080/"
 
     fun getApiService(): ApiService {

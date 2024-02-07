@@ -1,5 +1,6 @@
 package com.example.ticketmachinemobile.util
 
+import androidx.compose.runtime.remember
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -8,23 +9,30 @@ import java.util.*
 
 
 object DateUtil {
-    fun generateDateAndDayLists(): Pair<List<String>, List<String>> {
-        val currentDate = LocalDate.now()
-        val dateList = mutableListOf<String>()
-        val dayList = mutableListOf<String>()
+    /**
+     * 生成日期和星期列表
+     * 依次返回： dateList、weekList、formatStringList
+     */
+    fun generateDateAndDayLists() : Triple<List<String>, List<String>, List<String>> {
+        val dateList =  mutableListOf<String>()
+        val weekList = mutableListOf<String>()
+        // 格式为 yyyy-MM-dd
+        val formatStringList = mutableListOf<String>()
 
-        val formatter = DateTimeFormatter.ofPattern("M月d日", Locale.CHINA)
+        val currentDate =  LocalDate.now()
+        val formatter =  DateTimeFormatter.ofPattern("M月d日")
+        val locale = Locale("zh", "CN")
 
-        for (i in 0 until 14) {
+        for (i in 0 until 28) {
             val date = currentDate.plusDays(i.toLong())
             val formattedDate = date.format(formatter)
-            val dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.CHINA)
+            val dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.FULL, locale)
 
             dateList.add(formattedDate)
-            dayList.add(dayOfWeek)
+            weekList.add(dayOfWeek)
+            formatStringList.add(DateUtil.formatDate(date))
         }
-
-        return dateList to dayList
+        return Triple(dateList, weekList, formatStringList)
     }
 
     fun main() {

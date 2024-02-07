@@ -72,7 +72,7 @@ android {
         dataBinding = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.8"
     }
     packaging {
         resources {
@@ -84,9 +84,9 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.core:core-ktx:1.12.0")
     // lifecycle
-    var lifecycle_version = "2.6.2"
+    var lifecycle_version = "2.7.0"
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version")
@@ -97,16 +97,17 @@ dependencies {
 
 
     implementation("androidx.activity:activity-compose:1.8.0")
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation(platform("androidx.compose:compose-bom:2024.01.00"))
+    implementation("androidx.compose.ui:ui:1.6.0")
+    implementation("androidx.compose.ui:ui-graphics:1.6.0")
+
+    implementation("androidx.compose.ui:ui-tooling-preview:1.6.0")
     // navigation
     implementation("androidx.navigation:navigation-compose:2.5.3")
     // material
-    implementation("androidx.compose.material:material")
-    implementation("androidx.compose.material:material-icons-core")
-    implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.compose.material:material:1.6.0")
+    implementation("androidx.compose.material:material-icons-core:1.6.0")
+    implementation("androidx.compose.material:material-icons-extended:1.6.0")
     // huawei Scan Kit
     implementation("com.huawei.hms:scanplus:2.12.0.301")
     implementation(files("libs/OTG.jar"))
@@ -151,10 +152,11 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+//    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    runtimeOnly("androidx.compose:compose-bom:2024.01.00")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.0")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.6.0")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.0")
 
     // 兼容低版本api
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.2")
@@ -163,6 +165,8 @@ dependencies {
     implementation(project(":ocr_ui"))
     // 引入百度ocr
     implementation(files("libs/ocrsdk.aar"))
+    // 滚动界面
+    runtimeOnly("androidx.recyclerview:recyclerview:1.3.2")
 }
 
 configurations {

@@ -74,7 +74,7 @@ fun ShiftLayout(
             )
             // 发车时间
             Text(
-                text = DateUtil.formatTimeHHMM(shiftInfo.startTime),
+                text = shiftInfo.startTime,
                 style = textWhiteAndCenter,
                 modifier = Modifier.weight(1f)
             )
@@ -119,7 +119,7 @@ fun ShiftLayout(
                     )
                 // 到站时间
                 Text(
-                    text = DateUtil.formatTimeHHMM(value.arrivalTime),
+                    text = value.arrivalTime,
                     style = textWhiteAndCenter,
                 )
 
